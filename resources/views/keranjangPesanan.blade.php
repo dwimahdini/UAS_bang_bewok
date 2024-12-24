@@ -43,6 +43,17 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    function showLoading() {
+        Swal.fire({
+            title: 'Loading...',
+            text: 'Please wait while we process your order.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    }
+
     function batalPesanan(id) {
         Swal.fire({
             title: 'Apakah Anda yakin?',

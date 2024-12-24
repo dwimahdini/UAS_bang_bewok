@@ -113,3 +113,8 @@ Route::delete('/keranjang/{id}/batal', [KeranjangPesananController::class, 'bata
 
 Route::post('/process-order', [KeranjangPesananController::class, 'processOrder']);
 
+Route::post('/keranjang/process-all', [KeranjangPesananController::class, 'processAllOrders']);
+Route::post('/keranjang/{id}/process', [KeranjangPesananController::class, 'processOrderById']);
+Route::post('/keranjang/{id}/approve', [KeranjangPesananController::class, 'approveOrder']);
+Route::post('/keranjang/{id}/reject', [KeranjangPesananController::class, 'rejectOrder']);
+

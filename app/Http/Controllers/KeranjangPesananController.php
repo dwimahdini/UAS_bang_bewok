@@ -73,22 +73,35 @@ class KeranjangPesananController extends Controller
         return response()->json(['message' => 'Produk berhasil ditambahkan ke keranjang'], 200);
     }
 
-    public function processOrder()
+    public function processAllOrders()
     {
-        $keranjangItems = KeranjangPesanan::all();
+        // Logic to process all orders
+    }
 
-        foreach ($keranjangItems as $item) {
-            Order::create([
-                'produk_id' => $item->produk_id,
-                'jumlah' => $item->jumlah,
-                'total_harga' => $item->produk->harga * $item->jumlah,
-                'status' => 'diProses',
-            ]);
+    public function processOrderById($id)
+    {
+        // Logic to process a specific order by ID
+    }
 
-            // Optionally, remove the item from the cart
-            $item->delete();
+    public function approveOrder($id)
+    {
+        $order = KeranjangPesanan::find($id);
+        if ($order) {
+            $order->status = 'Approved';
+            $order->save();
+            return response()->json(['message' => 'Order approved successfully.']);
         }
+        return response()->json(['message' => 'Order not found.'], 404);
+    }
 
-        return response()->json(['message' => 'Pesanan berhasil diproses.']);
+    public function rejectOrder($id)
+    {
+        $order = KeranjangPesanan::find($id);
+        if ($order) {
+            $order->status = 'Rejected';
+            $order->save();
+            return response()->json(['message' => 'Order rejected successfully.']);
+        }
+        return response()->json(['message' => 'Order not found.'], 404);
     }
 }

@@ -15,7 +15,6 @@
                     <th class="py-2 px-4 text-center text-xs font-medium text-white uppercase tracking-wider border-r border-gray-300">Jumlah</th>
                     <th class="py-2 px-4 text-center text-xs font-medium text-white uppercase tracking-wider border-r border-gray-300">Total Harga</th>
                     <th class="py-2 px-4 text-center text-xs font-medium text-white uppercase tracking-wider border-r border-gray-300">Tanggal</th>
-                    <th class="py-2 px-4 text-center text-xs font-medium text-white uppercase tracking-wider border-r border-gray-300">Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,11 +25,56 @@
                     <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">{{ $order->jumlah }}</td>
                     <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">Rp {{ number_format($order->total_harga, 2, ',', '.') }}</td>
                     <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">{{ $order->tanggal_pesanan }}</td>
-                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">{{ $order->status }}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
+
+    <!-- Buttons below the table -->
+    <div class="mt-4 flex justify-between space-x-4 w-full">
+        <button class="bg-green-500 text-white px-4 py-2 rounded w-1/3" onclick="processAllOrders()">Proses Pesanan</button>
+        <button class="bg-blue-500 text-white px-4 py-2 rounded w-1/3" onclick="approveAllOrders()">Terima Pesanan</button>
+        <button class="bg-red-500 text-white px-4 py-2 rounded w-1/3" onclick="rejectAllOrders()">Tolak Pesanan</button>
+    </div>
 </div>
+
+<script>
+    function processAllOrders() {
+        // Implement the logic to process all orders
+        fetch('/keranjang/{id}/process', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Processing all orders');
+            location.reload();
+        });
+    }
+
+    function approveAllOrders() {
+        // Implement the logic to approve all orders
+        fetch('/keranjang/{id}/approve', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Approving all orders');
+            location.reload();
+        });
+    }
+
+    function rejectAllOrders() {
+        // Implement the logic to reject all orders
+        console.log('Rejecting all orders');
+    }
+</script>
 @endsection

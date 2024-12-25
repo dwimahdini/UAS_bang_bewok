@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
+use App\Models\KeranjangPesanan;
 use Illuminate\Http\Request;
 
 class PesananMasukController extends Controller
 {
     public function index()
     {
-        $orders = Order::with('produk')->get();
-        return view('pesananMasuk', compact('orders'));
+        $keranjangPesanan = KeranjangPesanan::with('produk')->get();
+        return view('pesananMasuk', compact('keranjangPesanan'));
     }
 }

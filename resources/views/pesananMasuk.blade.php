@@ -18,13 +18,13 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($orders as $order)
+                @foreach($keranjangPesanan as $item)
                 <tr class="hover:bg-gray-100 transition duration-300 ease-in-out">
                     <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">{{ $loop->iteration }}</td>
-                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">{{ $order->produk->nama_produk }}</td>
-                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">{{ $order->jumlah }}</td>
-                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">Rp {{ number_format($order->total_harga, 2, ',', '.') }}</td>
-                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">{{ $order->tanggal_pesanan }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">{{ $item->produk->nama_produk }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">{{ $item->jumlah }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">Rp {{ number_format($item->produk->harga * $item->jumlah, 2, ',', '.') }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">{{ $item->created_at }}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -42,7 +42,7 @@
 <script>
     function processAllOrders() {
         // Implement the logic to process all orders
-        fetch('/keranjang/{id}/process', {
+        fetch('/keranjang/process', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -58,7 +58,7 @@
 
     function approveAllOrders() {
         // Implement the logic to approve all orders
-        fetch('/keranjang/{id}/approve', {
+        fetch('/keranjang/approve', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}',

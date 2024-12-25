@@ -27,7 +27,7 @@
                 </span>
             </p>
             <div class="mt-auto">
-                <button onclick="openOrderModal({{ $p->id }}, '{{ $p->nama_produk }}', {{ $p->harga }})" class="mt-2 bg-[#5D5108] text-white px-2 py-1 rounded-lg">Pesan</button>
+                <button onclick="pesanProduk({{ $p->id }})" class="mt-2 bg-[#5D5108] text-white px-2 py-1 rounded-lg">Pesan</button>
             </div>
         </div>
         @endforeach
@@ -37,7 +37,7 @@
 <!-- Include SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- Modal Pesan Produk -->
+<!-- Modal for Quantity Input -->
 <div id="orderModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
     <div class="bg-white rounded-lg p-4 w-full max-w-md">
         <h2 class="text-lg font-semibold mb-2 text-center">Pesan Produk</h2>
@@ -45,7 +45,8 @@
             <p id="productName"></p>
             <p id="productPrice"></p>
             <label for="quantity" class="block mt-2">Jumlah:</label>
-            <input type="number" id="quantity" class="border border-gray-300 rounded-lg w-full p-2" min="1" value="1">
+            <input type="number" id="quantityInput" class="border border-gray-300 rounded-lg w-full p-2" min="1" value="1">
+            <p id="remainingQuantity" class="mt-2 text-gray-600"></p>
         </div>
         <div class="flex justify-between mt-4">
             <button type="button" onclick="closeOrderModal()" class="bg-red-500 text-white px-4 py-2 rounded-lg">Batal</button>
@@ -71,72 +72,65 @@
     }
 
     // Fungsi untuk mengkonfirmasi pesanan
-    async function confirmOrder() {
-        const quantity = document.getElementById("quantity").value;
+    function confirmOrder() {
+        const quantity = document.getElementById("quantityInput").value;
 
-        try {
-            // Kirim data ke server
-            const response = await fetch('/keranjang', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    productId: selectedProductId,
-                    quantity: quantity
-                })
-            });
-
-            if (response.ok) {
-                console.log("Produk berhasil ditambahkan ke keranjang");
-
-                // Perbarui jumlah stok produk
-                const updateResponse = await fetch(`/produk/${selectedProductId}/update`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        quantity: -quantity
-                    })
+        fetch('/pesan-produk/tambah-ke-keranjang', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                productId: selectedProductId,
+                quantity: quantity
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: data.success,
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    closeOrderModal(); // Close the modal
+                    location.reload(); // Reload the page to see updated quantities
                 });
-
-                if (updateResponse.ok) {
-                    // Show SweetAlert2 notification
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: `Produk berhasil dipesan!`,
-                        confirmButtonText: 'OK'
-                    });
-
-                    // Perbarui tampilan jumlah produk
-                    const productElement = document.getElementById(`product-quantity-${selectedProductId}`);
-                    if (productElement) {
-                        const currentQuantityText = productElement.innerText; // "Jumlah: 5"
-                        const currentQuantity = parseInt(currentQuantityText.split(': ')[1]); // Ambil angka setelah ": "
-
-                        // Pastikan currentQuantity adalah angka sebelum mengurangi
-                        if (!isNaN(currentQuantity)) {
-                            productElement.innerText = `Jumlah: ${currentQuantity - quantity}`; // Update jumlah produk di tampilan
-                        } else {
-                            alert('Jumlah produk tidak valid:'+ currentQuantityText)
-                        }
-                    }
-
-                    closeOrderModal();
-                } else {
-                    const errorData = await updateResponse.json();
-                    alert('Gagal mengupdate jumlah produk: ' + errorData.message)
-                }
             } else {
-                alert('Gagal menambahkan produk ke keranjang');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: data.error,
+                    confirmButtonText: 'OK'
+                });
             }
-        } catch (error) {
-            alert('Error:' + error);
-        }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: 'Terjadi kesalahan saat memproses pesanan.',
+                confirmButtonText: 'OK'
+            });
+        });
+    }
+
+    // Fungsi pesanProduk yang diperbaiki
+    function pesanProduk(productId) {
+        // Fetch product details
+        fetch(`/produk/${productId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Set product details in the modal
+                openOrderModal(productId, data.nama_produk, data.harga);
+                document.getElementById("remainingQuantity").innerText = `Sisa Produk: ${data.jumlah}`; // Set remaining quantity
+            })
+            .catch(error => {
+                console.error('Error fetching product details:', error);
+            });
     }
 </script>
 @endsection

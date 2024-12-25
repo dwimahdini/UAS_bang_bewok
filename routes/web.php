@@ -111,10 +111,11 @@ Route::patch('/produk/{id}/update', [ProdukController::class, 'update'])->middle
 
 Route::delete('/keranjang/{id}/batal', [KeranjangPesananController::class, 'batalPesanan']);
 
-Route::post('/process-order', [KeranjangPesananController::class, 'processOrder']);
+Route::post('/process-order', [KeranjangPesananController::class, 'processAllOrders']);
 
-Route::post('/keranjang/process-all', [KeranjangPesananController::class, 'processAllOrders']);
-Route::post('/keranjang/{id}/process', [KeranjangPesananController::class, 'processOrderById']);
+Route::post('/keranjang/{id}/process', [KeranjangPesananController::class, 'processOrder']);
 Route::post('/keranjang/{id}/approve', [KeranjangPesananController::class, 'approveOrder']);
 Route::post('/keranjang/{id}/reject', [KeranjangPesananController::class, 'rejectOrder']);
+
+Route::post('/pesan-produk/tambah-ke-keranjang', [PesanProdukController::class, 'tambahKeKeranjang']);
 

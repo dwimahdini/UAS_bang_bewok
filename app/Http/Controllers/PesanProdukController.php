@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Produk;
+use App\Models\KeranjangPesanan;
 use Illuminate\Http\Request;
 
 class PesanProdukController extends Controller
@@ -32,8 +33,11 @@ class PesanProdukController extends Controller
         $produk->jumlah -= $request->quantity;
         $produk->save();
 
-        // Logika untuk menambahkan produk ke keranjang (jika ada)
-        // Misalnya, Anda bisa menambahkan ke model KeranjangPesanan
+        // Tambahkan produk ke keranjang
+        KeranjangPesanan::create([
+            'produk_id' => $produk->id,
+            'jumlah' => $request->quantity,
+        ]);
 
         return response()->json(['success' => 'Produk berhasil dipesan.']);
     }

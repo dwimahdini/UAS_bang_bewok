@@ -39,9 +39,8 @@
 
     <!-- Buttons below the table -->
     <div class="mt-4 flex justify-between space-x-4 w-full">
-        <button class="bg-green-500 text-white px-4 py-2 rounded w-1/3" onclick="handleOrder('process')">Proses Pesanan</button>
-        <button class="bg-blue-500 text-white px-4 py-2 rounded w-1/3" onclick="handleOrder('approve')">Terima Pesanan</button>
-        <button class="bg-red-500 text-white px-4 py-2 rounded w-1/3" onclick="handleOrder('reject')">Tolak Pesanan</button>
+        <button class="bg-green-500 text-white px-4 py-2 rounded w-1/3" onclick="handleOrder('terima')">Terima Pesanan</button>
+        <button class="bg-red-500 text-white px-4 py-2 rounded w-1/3" onclick="handleOrder('tolak')">Tolak Pesanan</button>
     </div>
 </div>
 
@@ -58,9 +57,8 @@
         }
 
         const actionMessages = {
-            process: { title: 'Proses Pesanan', confirmText: 'Ya, proses!' },
-            approve: { title: 'Terima Pesanan', confirmText: 'Ya, terima!' },
-            reject: { title: 'Tolak Pesanan', confirmText: 'Ya, tolak!' },
+            terima: { title: 'Terima Pesanan', confirmText: 'Ya, terima!' },
+            tolak: { title: 'Tolak Pesanan', confirmText: 'Ya, tolak!' },
         };
 
         const { title, confirmText } = actionMessages[action];
@@ -70,14 +68,14 @@
             text: `Apakah Anda yakin ingin ${title.toLowerCase()} yang dipilih?`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: action === 'reject' ? '#d33' : '#3085d6',
+            confirmButtonColor: action === 'tolak' ? '#d33' : '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: confirmText,
             cancelButtonText: 'Tidak, batalkan'
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const response = await fetch(`/pesananMasuk/${action}Orders`, {
+                    const response = await fetch(`/pesananMasuk/${action === 'terima' ? 'terimaPesanan' : 'tolakPesanan'}`, {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -87,17 +85,7 @@
                     });
 
                     if (!response.ok) {
-                        const contentType = response.headers.get("content-type");
-                        let errorData;
-
-                        if (contentType && contentType.includes("application/json")) {
-                            errorData = await response.json();
-                        } else {
-                            const text = await response.text();
-                            throw new Error('Server returned an error: ' + text);
-                        }
-
-                        throw new Error(errorData.error || 'Network response was not ok');
+                        throw new Error('Network response was not ok');
                     }
 
                     const data = await response.json();

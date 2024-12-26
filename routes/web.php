@@ -138,7 +138,7 @@ Route::get('/pesananMasuk', [PesananMasukController::class, 'index']);
 Route::post('/pesananMasuk/updateStatus', [PesananMasukController::class, 'updateStatus']);
 Route::post('/pesananMasuk/processOrders', [PesananMasukController::class, 'processOrders']);
 Route::post('/pesananMasuk/approveOrders', [PesananMasukController::class, 'approveOrders']);
-Route::post('/pesananMasuk/rejectOrders', [PesananMasukController::class, 'rejectOrders']);
+Route::post('/pesananMasuk/rejectOrders', [KeranjangPesananController::class, 'rejectOrders']);
 
 Route::get('/keranjangPesanan', [KeranjangPesananController::class, 'index']);
 Route::post('/keranjangPesanan/addToCart', [KeranjangPesananController::class, 'addToCart']);
@@ -147,3 +147,6 @@ Route::post('/keranjangPesanan/processOrder/{id}', [KeranjangPesananController::
 Route::post('/keranjangPesanan/approveOrder/{id}', [KeranjangPesananController::class, 'approveOrder']);
 Route::post('/keranjangPesanan/rejectOrder/{id}', [KeranjangPesananController::class, 'rejectOrder']);
 Route::delete('/keranjangPesanan/batalPesanan/{id}', [KeranjangPesananController::class, 'batalPesanan']);
+
+Route::post('/pesananMasuk/terimaPesanan', [PesananMasukController::class, 'approveOrders']);
+Route::post('/pesananMasuk/tolakPesanan', [PesananMasukController::class, 'rejectOrders']);

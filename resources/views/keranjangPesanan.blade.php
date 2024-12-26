@@ -23,18 +23,20 @@
                 <p class="text-gray-600 w-1/3 ml-2"><strong>Produk: {{ $item->produk->nama_produk }}</strong></p>
                 <p class="text-gray-600 w-1/3 text-center">Jumlah: {{ $item->jumlah }}</p>
                 <p class="text-gray-600 w-1/3 text-right mr-4">Total: Rp {{ number_format($itemTotal, 2, ',', '.') }}</p>
-                <p class="text-gray-600 w-1/3 text-center">Status: {{ $item->status }}</p>
+                <p class="text-gray-600 w-1/3 text-center">
+                    Status: 
+                    <span class="{{ $item->status === 'pending' ? 'bg-green-200 text-green-800' : ($item->status === 'processed' ? 'bg-blue-200 text-blue-800' : '') }} px-2 py-1 rounded">
+                        {{ $item->status === 'pending' ? 'Menunggu' : ($item->status === 'processed' ? 'Diproses' : $item->status) }}
+                    </span>
+                </p>
             </div>
-            <div class="bg-green-500 text-white px-4 py-2 rounded" onclick="processOrder({{ $item->id }})">Proses Pesanan</div>
-            <div class="bg-blue-500 text-white px-4 py-2 rounded" onclick="approveOrder({{ $item->id }})">Terima Pesanan</div>
-            <div class="bg-red-500 text-white px-4 py-2 rounded" onclick="rejectOrder({{ $item->id }})">Tolak Pesanan</div>
         </div>
         @endforeach
 
         <!-- Total Price and Quantity Card -->
         <div class="bg-white rounded-lg shadow-md p-6 flex items-center justify-between">
             <div class="flex-1 flex items-center justify-between">
-                <p class="text-gray-600 w-1/3 ml-2"><strong>Total Produk</strong></p>
+                <p class="text-gray-600 w-1/3 ml-2"><strong>Total Pesanan Anda</strong></p>
                 <p class="text-gray-600 w-1/3 text-center">Jumlah: {{ $totalQuantity }}</p>
                 <p class="text-gray-600 w-1/3 text-right mr-4">Total: Rp {{ number_format($totalPrice, 2, ',', '.') }}</p>
             </div>
@@ -71,78 +73,6 @@
 
             const data = await response.json();
             Swal.fire('Sukses!', data.message || 'Pesanan berhasil diproses.', 'success').then(() => {
-                location.reload();
-            });
-        } catch (error) {
-            console.error('Error:', error);
-            Swal.fire('Gagal!', error.message || 'Terjadi kesalahan pada server.', 'error');
-        }
-    }
-
-    async function processOrder(id) {
-        try {
-            const response = await fetch(`/keranjangPesanan/processOrder/${id}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-            Swal.fire('Sukses!', data.message || 'Pesanan berhasil diproses.', 'success').then(() => {
-                location.reload();
-            });
-        } catch (error) {
-            console.error('Error:', error);
-            Swal.fire('Gagal!', error.message || 'Terjadi kesalahan pada server.', 'error');
-        }
-    }
-
-    async function approveOrder(id) {
-        try {
-            const response = await fetch(`/keranjangPesanan/approveOrder/${id}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-            Swal.fire('Sukses!', data.message || 'Pesanan berhasil diterima.', 'success').then(() => {
-                location.reload();
-            });
-        } catch (error) {
-            console.error('Error:', error);
-            Swal.fire('Gagal!', error.message || 'Terjadi kesalahan pada server.', 'error');
-        }
-    }
-
-    async function rejectOrder(id) {
-        try {
-            const response = await fetch(`/keranjangPesanan/rejectOrder/${id}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-            Swal.fire('Sukses!', data.message || 'Pesanan berhasil ditolak.', 'success').then(() => {
                 location.reload();
             });
         } catch (error) {

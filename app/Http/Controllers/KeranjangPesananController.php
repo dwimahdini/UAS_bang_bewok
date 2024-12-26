@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\Produk;
 use App\Models\KeranjangPesanan;
+use App\Models\Order;
 
 class KeranjangPesananController extends Controller
 {
@@ -112,5 +113,21 @@ class KeranjangPesananController extends Controller
         // Fetch the cart items with their current status
         $keranjangPesanan = KeranjangPesanan::with('produk')->get();
         return view('keranjangPesanan', compact('keranjangPesanan'));
+    }
+
+    public function approveOrders(Request $request)
+    {
+        $orderIds = $request->input('order_ids');
+        // Update the status in the database
+        Order::whereIn('id', $orderIds)->update(['status' => 'processed']);
+        return response()->json(['message' => 'Pesanan diterima.']);
+    }
+
+    public function rejectOrders(Request $request)
+    {
+        $orderIds = $request->input('order_ids');
+        // Update the status in the database
+        Order::whereIn('id', $orderIds)->update(['status' => 'rejected']);
+        return response()->json(['message' => 'Pesanan ditolak.']);
     }
 }

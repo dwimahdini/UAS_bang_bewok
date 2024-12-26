@@ -123,7 +123,7 @@
 </div>
 
 <!-- Modal Tambah Produk -->
-<div id="addModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden" tabindex="-1" aria-hidden="true">
+<div id="addModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden" tabindex="-1" inert>
     <div class="bg-white rounded-lg p-4 w-full max-w-md">
         <h2 class="text-lg font-semibold mb-2 text-center">Tambah Produk</h2>
         <form id="addForm" method="POST" action="{{ route('produk.store') }}" enctype="multipart/form-data">
@@ -161,7 +161,7 @@
 </div>
 
 <!-- Modal Edit Produk -->
-<div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden" tabindex="-1" aria-hidden="true">
+<div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden" tabindex="-1" inert>
     <div class="bg-white rounded-lg p-4 w-full max-w-md">
         <h2 class="text-lg font-semibold mb-2 text-center">Edit Produk</h2>
         <form id="editForm" method="POST" enctype="multipart/form-data">
@@ -196,13 +196,31 @@
     </div>
 </div>
 
-<!-- Include Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <!-- Include SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    @if (session('success'))
+    Swal.fire({
+        title: 'Success!',
+        text: "{{ session('success') }}",
+        icon: 'success',
+        confirmButtonText: 'OK'
+    });
+    @endif
+
+    // Function to open add modal
+    function openAddModal() {
+        document.getElementById("addModal").classList.remove("hidden");
+        document.getElementById("addModal").removeAttribute("inert");
+    }
+
+    // Function to close add modal
+    function closeAddModal() {
+        document.getElementById("addModal").classList.add("hidden");
+        document.getElementById("addModal").setAttribute("inert", "true");
+    }
+
     // Function to open the edit modal
     function openEditModal(id) {
         // Fetch product data
@@ -222,11 +240,18 @@
 
                 // Open modal
                 document.getElementById('editModal').classList.remove('hidden');
+                document.getElementById('editModal').removeAttribute("inert");
             })
             .catch(error => {
                 console.error('Error fetching product data:', error);
                 alert('Unable to fetch product data.');
             });
+    }
+
+    // Function to close edit modal
+    function closeEditModal() {
+        document.getElementById("editModal").classList.add("hidden");
+        document.getElementById("editModal").setAttribute("inert", "true");
     }
 
     // Function to confirm deletion
@@ -297,24 +322,54 @@
     // Function to open add modal
     function openAddModal() {
         document.getElementById("addModal").classList.remove("hidden");
+        document.getElementById("addModal").removeAttribute("inert");
     }
 
     // Function to close add modal
     function closeAddModal() {
         document.getElementById("addModal").classList.add("hidden");
+        document.getElementById("addModal").setAttribute("inert", "true");
+    }
+
+    // Function to open the edit modal
+    function openEditModal(id) {
+        // Fetch product data
+        fetch(`/produk/${id}/edit`)
+            .then(response => response.json())
+            .then(data => {
+                // Populate modal fields
+                document.getElementById('edit_id').value = data.id;
+                document.getElementById('edit_nama_produk').value = data.nama_produk;
+                document.getElementById('edit_jumlah').value = data.jumlah;
+                document.getElementById('edit_harga').value = data.harga;
+                document.getElementById('edit_satuan').value = data.satuan;
+                document.getElementById('edit_tanggal_kadaluarsa').value = data.tanggal_kadaluarsa;
+                // Update form action dynamically
+                const editForm = document.getElementById('editForm');
+                editForm.action = `/produk/update/${id}`;
+
+                // Open modal
+                document.getElementById('editModal').classList.remove('hidden');
+                document.getElementById('editModal').removeAttribute("inert");
+            })
+            .catch(error => {
+                console.error('Error fetching product data:', error);
+                alert('Unable to fetch product data.');
+            });
     }
 
     // Function to close edit modal
     function closeEditModal() {
         document.getElementById("editModal").classList.add("hidden");
+        document.getElementById("editModal").setAttribute("inert", "true");
     }
 </script>
 
 @if (session('success'))
 <script>
     Swal.fire({
-        title: 'Sukses!',
-        text: "{{ session('sukses') }}",
+        title: 'Success!',
+        text: "{{ session('success') }}",
         icon: 'success',
         confirmButtonText: 'OK'
     });

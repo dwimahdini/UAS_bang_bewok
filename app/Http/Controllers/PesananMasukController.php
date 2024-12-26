@@ -9,7 +9,53 @@ class PesananMasukController extends Controller
 {
     public function index()
     {
-        $keranjangPesanan = KeranjangPesanan::with('produk')->get();
-        return view('pesananMasuk', compact('keranjangPesanan'));
+        $keranjang = KeranjangPesanan::where('status', 'processed')->with('produk')->get();
+        return view('pesananMasuk', compact('keranjang'));
+    }
+
+    public function updateStatus(Request $request)
+    {
+        $status = $request->input('status');
+        $orderIds = $request->input('order_ids'); // Expecting an array of order IDs
+
+        // Update the status of the specified orders
+        KeranjangPesanan::whereIn('id', $orderIds)->update(['status' => $status]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function processOrders(Request $request)
+    {
+        $request->validate([
+            'order_ids' => 'required|array',
+            'order_ids.*' => 'exists:keranjang_pesanan,id',
+        ], [
+            'order_ids.*.exists' => 'One or more selected order IDs are invalid. Please check your selection.',
+        ]);
+
+        $orderIds = $request->input('order_ids');
+        KeranjangPesanan::whereIn('id', $orderIds)->update(['status' => 'processed']);
+
+        return response()->json(['message' => 'Orders processed successfully.'], 200);
+    }
+
+    public function approveOrders(Request $request)
+    {
+        $orderIds = $request->input('order_ids'); // Expecting an array of order IDs
+
+        // Update the status of the specified orders to 'approved'
+        KeranjangPesanan::whereIn('id', $orderIds)->update(['status' => 'approved']);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function rejectOrders(Request $request)
+    {
+        $orderIds = $request->input('order_ids'); // Expecting an array of order IDs
+
+        // Update the status of the specified orders to 'rejected'
+        KeranjangPesanan::whereIn('id', $orderIds)->update(['status' => 'rejected']);
+
+        return response()->json(['success' => true]);
     }
 }

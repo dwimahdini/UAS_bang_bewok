@@ -169,97 +169,109 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    // Add JavaScript functions for sorting and searching similar to the inventory page
-    function sortTable() {
-        const table = document.getElementById("staffTable");
-        const rows = Array.from(table.rows);
-        const criteria = document.getElementById("sortCriteria").value;
+    document.addEventListener("DOMContentLoaded", function() {
+        // Ensure all elements are available before adding event listeners
+        const editButtons = document.querySelectorAll('.edit-button'); // Assuming you have a class for edit buttons
 
-        if (!criteria) return;
-
-        rows.sort((a, b) => {
-            let valueA, valueB;
-
-            switch (criteria) {
-                case 'nama':
-                    valueA = a.cells[1].innerText.toLowerCase();
-                    valueB = b.cells[1].innerText.toLowerCase();
-                    return valueA.localeCompare(valueB);
-                case 'posisi':
-                    valueA = a.cells[4].innerText.toLowerCase();
-                    valueB = b.cells[4].innerText.toLowerCase();
-                    const positionOrder = ['kepala cabang', 'staf'];
-                    return positionOrder.indexOf(valueA) - positionOrder.indexOf(valueB);
-                default:
-                    return 0;
-            }
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                openEditModal(this);
+            });
         });
 
-        // Re-append sorted rows and update numbering
-        rows.forEach((row, index) => {
-            table.appendChild(row);
-            row.cells[0].innerText = index + 1; // Update the numbering
-        });
-    }
+        // Define functions in the global scope
+        window.openEditModal = function(button) {
+            const id = button.getAttribute('data-id');
+            const form = document.getElementById('editForm');
+            form.action = `/staff/${id}`;
 
-    function searchTable() {
-        const input = document.getElementById("searchInput").value.toLowerCase();
-        const rows = document.querySelectorAll("#staffTable tr");
-        rows.forEach(row => {
-            const name = row.cells[1]?.innerText.toLowerCase() || '';
-            row.style.display = name.includes(input) ? '' : 'none';
-        });
-    }
+            document.getElementById('editNama').value = button.getAttribute('data-nama');
+            document.getElementById('editNotel').value = button.getAttribute('data-notel');
+            document.getElementById('editEmail').value = button.getAttribute('data-email');
+            document.getElementById('editPosisi').value = button.getAttribute('data-posisi');
+            document.getElementById('editCabang').value = button.getAttribute('data-cabang');
 
-    function openAddStaffModal() {
-        document.getElementById("addStaffModal").classList.remove("hidden");
-    }
+            document.getElementById("editModal").classList.remove("hidden");
+        };
 
-    function closeAddStaffModal() {
-        document.getElementById("addStaffModal").classList.add("hidden");
-    }
+        // Add JavaScript functions for sorting and searching similar to the inventory page
+        function sortTable() {
+            const table = document.getElementById("staffTable");
+            const rows = Array.from(table.rows);
+            const criteria = document.getElementById("sortCriteria").value;
 
-    function openEditModal(button) {
-        const id = button.getAttribute('data-id');
-        const form = document.getElementById('editForm');
-        form.action = `/staff/${id}`;
+            if (!criteria) return;
 
-        document.getElementById('editNama').value = button.getAttribute('data-nama');
-        document.getElementById('editNotel').value = button.getAttribute('data-notel');
-        document.getElementById('editEmail').value = button.getAttribute('data-email');
-        document.getElementById('editPosisi').value = button.getAttribute('data-posisi');
-        document.getElementById('editCabang').value = button.getAttribute('data-cabang');
+            rows.sort((a, b) => {
+                let valueA, valueB;
 
-        document.getElementById("editModal").classList.remove("hidden");
-    }
+                switch (criteria) {
+                    case 'nama':
+                        valueA = a.cells[1].innerText.toLowerCase();
+                        valueB = b.cells[1].innerText.toLowerCase();
+                        return valueA.localeCompare(valueB);
+                    case 'posisi':
+                        valueA = a.cells[4].innerText.toLowerCase();
+                        valueB = b.cells[4].innerText.toLowerCase();
+                        const positionOrder = ['kepala cabang', 'staf'];
+                        return positionOrder.indexOf(valueA) - positionOrder.indexOf(valueB);
+                    default:
+                        return 0;
+                }
+            });
 
-    function closeEditModal() {
-        document.getElementById("editModal").classList.add("hidden");
-    }
+            // Re-append sorted rows and update numbering
+            rows.forEach((row, index) => {
+                table.appendChild(row);
+                row.cells[0].innerText = index + 1; // Update the numbering
+            });
+        }
 
-    function confirmDelete(id) {
+        function searchTable() {
+            const input = document.getElementById("searchInput").value.toLowerCase();
+            const rows = document.querySelectorAll("#staffTable tr");
+            rows.forEach(row => {
+                const name = row.cells[1]?.innerText.toLowerCase() || '';
+                row.style.display = name.includes(input) ? '' : 'none';
+            });
+        }
+
+        function openAddStaffModal() {
+            document.getElementById("addStaffModal").classList.remove("hidden");
+        }
+
+        function closeAddStaffModal() {
+            document.getElementById("addStaffModal").classList.add("hidden");
+        }
+
+        function closeEditModal() {
+            document.getElementById("editModal").classList.add("hidden");
+        }
+
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Yakin ingin menghapus staf ini?',
+                text: "Tindakan ini tidak dapat dibatalkan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, hapus!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`deleteForm-${id}`).submit();
+                }
+            });
+        }
+
+        @if (session('success'))
         Swal.fire({
-            title: 'Yakin ingin menghapus staf ini?',
-            text: "Tindakan ini tidak dapat dibatalkan!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Ya, hapus!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById(`deleteForm-${id}`).submit();
-            }
+            title: 'Success!',
+            text: "{{ session('success') }}",
+            icon: 'success',
+            confirmButtonText: 'OK'
         });
-    }
-
-    @if (session('success'))
-    Swal.fire({
-        title: 'Success!',
-        text: "{{ session('success') }}",
-        icon: 'success',
-        confirmButtonText: 'OK'
+        @endif
     });
-    @endif
 </script>
 @endsection

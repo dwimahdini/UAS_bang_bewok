@@ -20,11 +20,14 @@
         <div class="bg-white rounded-lg shadow-md p-6 flex items-center justify-between">
             <img src="{{ asset('img/' . $item->produk->gambar) }}" alt="Gambar Produk" class="w-16 h-16 object-cover mr-4">
             <div class="flex-1 flex items-center justify-between">
-                <p class="text-gray-600 w-1/3 ml-2"><strong>Produk : {{ $item->produk->nama_produk }}</strong></p>
+                <p class="text-gray-600 w-1/3 ml-2"><strong>Produk: {{ $item->produk->nama_produk }}</strong></p>
                 <p class="text-gray-600 w-1/3 text-center">Jumlah: {{ $item->jumlah }}</p>
                 <p class="text-gray-600 w-1/3 text-right mr-4">Total: Rp {{ number_format($itemTotal, 2, ',', '.') }}</p>
+                <p class="text-gray-600 w-1/3 text-center">Status: {{ $item->status }}</p>
             </div>
-            <button class="bg-red-500 text-white px-4 py-2 rounded" onclick="batalPesanan({{ $item->id }})">Batal</button>
+            <div class="bg-green-500 text-white px-4 py-2 rounded" onclick="processOrder({{ $item->id }})">Proses Pesanan</div>
+            <div class="bg-blue-500 text-white px-4 py-2 rounded" onclick="approveOrder({{ $item->id }})">Terima Pesanan</div>
+            <div class="bg-red-500 text-white px-4 py-2 rounded" onclick="rejectOrder({{ $item->id }})">Tolak Pesanan</div>
         </div>
         @endforeach
 
@@ -35,113 +38,117 @@
                 <p class="text-gray-600 w-1/3 text-center">Jumlah: {{ $totalQuantity }}</p>
                 <p class="text-gray-600 w-1/3 text-right mr-4">Total: Rp {{ number_format($totalPrice, 2, ',', '.') }}</p>
             </div>
-            <button class="bg-green-500 text-white px-4 py-2 rounded" onclick="processOrder()">Proses Pesanan</button>
+            <button class="bg-green-500 text-white px-4 py-2 rounded" onclick="processAllOrders()">Proses Semua Pesanan</button>
         </div>
     </div>
 </div>
 
+<!-- Include SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    function showLoading() {
-        Swal.fire({
-            title: 'Loading...',
-            text: 'Please wait while we process your order.',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
+    async function processAllOrders() {
+        const orderIds = @json($keranjangPesanan->pluck('id'));
+
+        if (orderIds.length === 0) {
+            Swal.fire('Peringatan!', 'Tidak ada pesanan untuk diproses.', 'warning');
+            return;
+        }
+
+        try {
+            const response = await fetch('/keranjangPesanan/processAllOrders', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ order_ids: orderIds })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-        });
+
+            const data = await response.json();
+            Swal.fire('Sukses!', data.message || 'Pesanan berhasil diproses.', 'success').then(() => {
+                location.reload();
+            });
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire('Gagal!', error.message || 'Terjadi kesalahan pada server.', 'error');
+        }
     }
 
-    function batalPesanan(id) {
-        Swal.fire({
-            title: 'Apakah Anda yakin?',
-            text: "Anda tidak dapat mengembalikan tindakan ini!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, batalkan!',
-            cancelButtonText: 'Tidak, tetap simpan'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch(`/keranjang/${id}/batal`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        Swal.fire(
-                            'Dibatalkan!',
-                            'Produk telah dibatalkan.',
-                            'success'
-                        ).then(() => {
-                            location.reload();
-                        });
-                    } else {
-                        Swal.fire(
-                            'Gagal!',
-                            'Terjadi kesalahan saat membatalkan pesanan.',
-                            'error'
-                        );
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire(
-                        'Gagal!',
-                        'Terjadi kesalahan pada server.',
-                        'error'
-                    );
-                });
+    async function processOrder(id) {
+        try {
+            const response = await fetch(`/keranjangPesanan/processOrder/${id}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-        });
+
+            const data = await response.json();
+            Swal.fire('Sukses!', data.message || 'Pesanan berhasil diproses.', 'success').then(() => {
+                location.reload();
+            });
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire('Gagal!', error.message || 'Terjadi kesalahan pada server.', 'error');
+        }
     }
 
-    function processOrder() {
-        Swal.fire({
-            title: 'Proses Pesanan',
-            text: "Apakah Anda ingin memproses pesanan ini?",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#28a745',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, proses!',
-            cancelButtonText: 'Tidak, batalkan'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                showLoading();
-                fetch('/process-order', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    Swal.fire(
-                        'Diproses!',
-                        'Pesanan Anda sedang diproses.',
-                        'success'
-                    ).then(() => {
-                        location.reload();
-                    });
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire(
-                        'Gagal!',
-                        'Terjadi kesalahan saat memproses pesanan.',
-                        'error'
-                    );
-                });
+    async function approveOrder(id) {
+        try {
+            const response = await fetch(`/keranjangPesanan/approveOrder/${id}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-        });
+
+            const data = await response.json();
+            Swal.fire('Sukses!', data.message || 'Pesanan berhasil diterima.', 'success').then(() => {
+                location.reload();
+            });
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire('Gagal!', error.message || 'Terjadi kesalahan pada server.', 'error');
+        }
+    }
+
+    async function rejectOrder(id) {
+        try {
+            const response = await fetch(`/keranjangPesanan/rejectOrder/${id}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            Swal.fire('Sukses!', data.message || 'Pesanan berhasil ditolak.', 'success').then(() => {
+                location.reload();
+            });
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire('Gagal!', error.message || 'Terjadi kesalahan pada server.', 'error');
+        }
     }
 </script>
 @endsection

@@ -14,6 +14,7 @@ use App\Http\Controllers\PenggunaAkunController;
 //use App\Http\Controllers\PesananMasukController;
 use App\Http\Controllers\PesanProdukController;
 use App\Http\Controllers\KeranjangPesananController;
+use App\Http\Controllers\OrderController;
 
 // ROUTE UNTUK INVENTORI
 Route::get('/inventori', [ProdukController::class, 'index'])->name('inventori')->middleware('auth');
@@ -119,3 +120,30 @@ Route::post('/keranjang/{id}/reject', [KeranjangPesananController::class, 'rejec
 
 Route::post('/pesan-produk/tambah-ke-keranjang', [PesanProdukController::class, 'tambahKeKeranjang']);
 
+Route::post('/process-order', [KeranjangPesananController::class, 'processAllOrders']);
+Route::post('/terima-pesanan/{id}', [KeranjangPesananController::class, 'approveOrder']);
+Route::post('/tolak-pesanan/{id}', [KeranjangPesananController::class, 'rejectOrder']);
+
+Route::post('/keranjang/update-status', [PesananMasukController::class, 'updateStatus']);
+
+Route::post('/keranjang/process', [KeranjangPesananController::class, 'processOrders']);
+
+Route::get('/cart', [KeranjangPesananController::class, 'viewCart']);
+
+Route::post('/keranjang/process', [KeranjangPesananController::class, 'processOrders']);
+Route::post('/keranjang/approve', [KeranjangPesananController::class, 'approve'])->name('keranjang.approve');
+Route::post('/keranjang/reject', [KeranjangPesananController::class, 'reject'])->name('keranjang.reject');
+
+Route::get('/pesananMasuk', [PesananMasukController::class, 'index']);
+Route::post('/pesananMasuk/updateStatus', [PesananMasukController::class, 'updateStatus']);
+Route::post('/pesananMasuk/processOrders', [PesananMasukController::class, 'processOrders']);
+Route::post('/pesananMasuk/approveOrders', [PesananMasukController::class, 'approveOrders']);
+Route::post('/pesananMasuk/rejectOrders', [PesananMasukController::class, 'rejectOrders']);
+
+Route::get('/keranjangPesanan', [KeranjangPesananController::class, 'index']);
+Route::post('/keranjangPesanan/addToCart', [KeranjangPesananController::class, 'addToCart']);
+Route::post('/keranjangPesanan/processAllOrders', [KeranjangPesananController::class, 'processAllOrders']);
+Route::post('/keranjangPesanan/processOrder/{id}', [KeranjangPesananController::class, 'processOrder']);
+Route::post('/keranjangPesanan/approveOrder/{id}', [KeranjangPesananController::class, 'approveOrder']);
+Route::post('/keranjangPesanan/rejectOrder/{id}', [KeranjangPesananController::class, 'rejectOrder']);
+Route::delete('/keranjangPesanan/batalPesanan/{id}', [KeranjangPesananController::class, 'batalPesanan']);

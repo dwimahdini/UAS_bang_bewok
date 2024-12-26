@@ -14,10 +14,11 @@ class KeranjangPesanan extends Model
     protected $fillable = [
         'produk_id',
         'jumlah',
+        'status',
     ];
 
     public function produk()
     {
-        return $this->belongsTo(Produk::class);
+        return $this->belongsTo(Produk::class, 'produk_id');
     }
 }

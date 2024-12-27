@@ -54,13 +54,6 @@ Route::put('/pesananMasuk/update/{id}', [PesananMasukController::class, 'update'
 Route::get('/penggunaakun', [PenggunaAkunController::class, 'index'])->name('penggunaakun.index')->middleware('auth');
 Route::post('/penggunaakun', [PenggunaAkunController::class, 'store'])->name('penggunaakun.store')->middleware('auth');
 
-// ROUTE UNTUK KERANJANG
-//Route::get('/keranjangStaf', [KeranjangController::class, 'viewCart'])->name('keranjangStaf.view')->middleware('auth');
-//Route::post('/tambah-ke-keranjang', [PesanController::class, 'tambahKeKeranjang'])->name('tambahKeKeranjang')->middleware('auth');
-//Route::delete('/keranjangStaf/{id}', [KeranjangController::class, 'deleteFromCart'])->name('keranjangStaf.delete')->middleware('auth');
-//Route::post('/keranjangStaf/proses', [KeranjangController::class, 'prosesPesanan'])->name('keranjangStaf.proses')->middleware('auth');
-//Route::post('/keranjangStaf', [KeranjangController::class, 'addToCart'])->name('keranjangStaf')->middleware('auth');
-
 // ROUTE UNTUK LANDING PAGE
 Route::get('/', function () { return view('welcome');});
 
@@ -83,8 +76,14 @@ Route::get('/', function () { return view('welcome');});
 
 Route::resource('produk', ProdukController::class);
 
+
+Route::middleware(['auth'])->group( function (){
+    Route::post('/laporan/store', [LaporanController::class, 'store'])->name('laporan.store');
+
+});
+
 // ROUTE UNTUK LAPORAN
-Route::post('/laporan/store', [LaporanController::class, 'store'])->name('laporan.store')->middleware('auth');
+
 
 // Route untuk menyimpan pengguna baru
 Route::post('/users/store', [PenggunaAkunController::class, 'store'])->name('users.store');
@@ -130,29 +129,29 @@ Route::post('/keranjang/process', [KeranjangPesananController::class, 'processOr
 
 Route::get('/cart', [KeranjangPesananController::class, 'viewCart']);
 
-Route::post('/keranjang/process', [KeranjangPesananController::class, 'processOrders']);
-Route::post('/keranjang/approve', [KeranjangPesananController::class, 'approve'])->name('keranjang.approve');
-Route::post('/keranjang/reject', [KeranjangPesananController::class, 'reject'])->name('keranjang.reject');
+Route::post('/keranjang/process', [KeranjangPesananController::class, 'processOrders'])->middleware('auth');
+Route::post('/keranjang/approve', [KeranjangPesananController::class, 'approve'])->name('keranjang.approve')->middleware('auth');
+Route::post('/keranjang/reject', [KeranjangPesananController::class, 'reject'])->name('keranjang.reject')->middleware('auth');
 
 Route::get('/pesananMasuk', [PesananMasukController::class, 'index']);
-Route::post('/pesananMasuk/updateStatus', [PesananMasukController::class, 'updateStatus']);
-Route::post('/pesananMasuk/processOrders', [PesananMasukController::class, 'processOrders']);
-Route::post('/pesananMasuk/approveOrders', [PesananMasukController::class, 'approveOrders']);
-Route::post('/pesananMasuk/rejectOrders', [KeranjangPesananController::class, 'rejectOrders']);
+Route::post('/pesananMasuk/updateStatus', [PesananMasukController::class, 'updateStatus'])->middleware('auth');
+Route::post('/pesananMasuk/processOrders', [PesananMasukController::class, 'processOrders'])->middleware('auth');
+Route::post('/pesananMasuk/approveOrders', [PesananMasukController::class, 'approveOrders'])->middleware('auth');
+Route::post('/pesananMasuk/rejectOrders', [KeranjangPesananController::class, 'rejectOrders'])->middleware('auth');
 
-Route::get('/keranjangPesanan', [KeranjangPesananController::class, 'index']);
-Route::post('/keranjangPesanan/addToCart', [KeranjangPesananController::class, 'addToCart']);
-Route::post('/keranjangPesanan/processAllOrders', [KeranjangPesananController::class, 'processAllOrders']);
-Route::post('/keranjangPesanan/processOrder/{id}', [KeranjangPesananController::class, 'processOrder']);
-Route::post('/keranjangPesanan/approveOrder/{id}', [KeranjangPesananController::class, 'approveOrder']);
-Route::post('/keranjangPesanan/rejectOrder/{id}', [KeranjangPesananController::class, 'rejectOrder']);
-Route::delete('/keranjangPesanan/batalPesanan/{id}', [KeranjangPesananController::class, 'batalPesanan']);
+Route::get('/keranjangPesanan', [KeranjangPesananController::class, 'index'])->middleware('auth');
+Route::post('/keranjangPesanan/addToCart', [KeranjangPesananController::class, 'addToCart'])->middleware('auth');
+Route::post('/keranjangPesanan/processAllOrders', [KeranjangPesananController::class, 'processAllOrders'])->middleware('auth');
+Route::post('/keranjangPesanan/processOrder/{id}', [KeranjangPesananController::class, 'processOrder'])->middleware('auth');
+Route::post('/keranjangPesanan/approveOrder/{id}', [KeranjangPesananController::class, 'approveOrder'])->middleware('auth');
+Route::post('/keranjangPesanan/rejectOrder/{id}', [KeranjangPesananController::class, 'rejectOrder'])->middleware('auth');
+Route::delete('/keranjangPesanan/batalPesanan/{id}', [KeranjangPesananController::class, 'batalPesanan'])->middleware('auth');
 
-Route::post('/pesananMasuk/terimaPesanan', [PesananMasukController::class, 'approveOrders']);
-Route::post('/pesananMasuk/tolakPesanan', [PesananMasukController::class, 'rejectOrders']);
+Route::post('/pesananMasuk/terimaPesanan', [PesananMasukController::class, 'approveOrders'])->middleware('auth');
+Route::post('/pesananMasuk/tolakPesanan', [PesananMasukController::class, 'rejectOrders'])->middleware('auth');
 
-Route::post('/updateStatus', [PesananMasukController::class, 'updateStatus']);
+Route::post('/updateStatus', [PesananMasukController::class, 'updateStatus'])->middleware('auth');
 
 Route::get('/debug-cart-status', function () {
-    return \App\Models\KeranjangPesanan::all();
+    return \App\Models\KeranjangPesanan::all()->middleware('auth');
 });

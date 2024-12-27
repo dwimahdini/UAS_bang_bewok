@@ -34,7 +34,7 @@ class KeranjangPesananController extends Controller
     public function index()
     {
         // Fetch the cart items with their current status
-        $keranjangPesanan = KeranjangPesanan::with('produk')->get();
+        $keranjangPesanan = KeranjangPesanan::with('produk')->get();  
         return view('keranjangPesanan', compact('keranjangPesanan'));
     }
 
@@ -114,7 +114,7 @@ class KeranjangPesananController extends Controller
     public function viewCart()
     {
         // Fetch the cart items with their current status
-        $keranjangPesanan = KeranjangPesanan::with('produk')->get();
+        $keranjangPesanan = KeranjangPesanan::with(['status', 'produk'])->get();
         return view('keranjangPesanan', compact('keranjangPesanan'));
     }
 

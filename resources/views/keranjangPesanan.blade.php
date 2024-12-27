@@ -11,12 +11,14 @@
             $totalQuantity = 0;
         @endphp
 
+        @dd($keranjangPesanan)
         @foreach($keranjangPesanan as $item)
         @php
             $itemTotal = $item->produk->harga * $item->jumlah;
             $totalPrice += $itemTotal;
             $totalQuantity += $item->jumlah;
         @endphp
+        
         <div class="bg-white rounded-lg shadow-md p-6 flex items-center justify-between">
             <img src="{{ asset('img/' . $item->produk->gambar) }}" alt="Gambar Produk" class="w-16 h-16 object-cover mr-4">
             <div class="flex-1 flex items-center justify-between">
@@ -25,9 +27,9 @@
                 <p class="text-gray-600 w-1/3 text-right mr-4">Total: Rp {{ number_format($itemTotal, 2, ',', '.') }}</p>
                 <p class="text-gray-600 w-1/3 text-center">
                     Status: 
-                    <span class="{{ $item->status === 'menunggu' ? 'bg-blue-200 text-blue-800' : ($item->status === 'disetujui' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800') }} px-2 py-1 rounded">
-                        {{ $item->status === 'menunggu' ? 'Menunggu' : ($item->status === 'disetujui' ? 'Disetujui' : 'Ditolak') }}
-                    </span>
+                    {{-- <span class="{{ $item->status === 1 ? 'bg-blue-200 text-blue-800' : ($item->status === 2 ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800') }} px-2 py-1 rounded">
+                        {{ $item->status->nama_status  }}
+                    </span> --}}
                 </p>
             </div>
         </div>

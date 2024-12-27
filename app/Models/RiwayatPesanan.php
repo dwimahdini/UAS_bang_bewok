@@ -11,11 +11,19 @@ class RiwayatPesanan extends Model
     use HasFactory;
 
     protected $table = 'riwayat_pesanan';
+    protected $casts = [
+        'created_at' => 'datetime',
+    ];
     protected $fillable = [
         'order_id',
         'status_id',
         'jumlah',
     ];
+
+    public function produk(): BelongsTo
+    {
+        return $this->belongsTo(Produk::class, 'order_id');
+    }
 
     public function status(): BelongsTo
     {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PesananMasukController;
+use App\Models\KeranjangPesanan;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\PesanController;
@@ -8,10 +9,8 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\LaporanController;
-//use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\PenggunaAkunController;
-//use App\Http\Controllers\PesananMasukController;
 use App\Http\Controllers\PesanProdukController;
 use App\Http\Controllers\KeranjangPesananController;
 use App\Http\Controllers\OrderController;
@@ -68,7 +67,7 @@ Route::post('/login', [LoginController::class, 'autentic']);
 Route::get('/login', function () { return view('login');});
 
 //laporan
-Route::get('/laporan', [LaporanController::class,'index']);
+
 Route::get('/logout', [LoginController::class, 'logout'])->middleware('auth');
 
 //landing page
@@ -78,8 +77,8 @@ Route::resource('produk', ProdukController::class);
 
 
 Route::middleware(['auth'])->group( function (){
+    Route::get('/laporan', [LaporanController::class,'index'])->name('laporan.index');
     Route::post('/laporan/store', [LaporanController::class, 'store'])->name('laporan.store');
-
 });
 
 // ROUTE UNTUK LAPORAN
@@ -153,5 +152,5 @@ Route::post('/pesananMasuk/tolakPesanan', [PesananMasukController::class, 'rejec
 Route::post('/updateStatus', [PesananMasukController::class, 'updateStatus'])->middleware('auth');
 
 Route::get('/debug-cart-status', function () {
-    return \App\Models\KeranjangPesanan::all()->middleware('auth');
+    return KeranjangPesanan::all()->middleware('auth');
 });

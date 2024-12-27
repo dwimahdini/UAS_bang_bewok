@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\KeranjangPesanan;
+use App\Models\RiwayatPesanan;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PesananMasukController extends Controller
 {
     public function index()
     {
-        $keranjang = KeranjangPesanan::where('status', 'processed')->with('produk')->get();
+        $keranjang = KeranjangPesanan::where('status_id', 1)->with('produk')->get();
         return view('pesananMasuk', compact('keranjang'));
     }
 
@@ -17,7 +19,7 @@ class PesananMasukController extends Controller
     {
         $orderIds = $request->input('order_ids');
         $action = $request->input('action');
-    
+
         if ($action === 'terima') {
             // Update status to 'disetujui'
             KeranjangPesanan::whereIn('id', $orderIds)->update(['status' => 'disetujui']);
@@ -25,7 +27,7 @@ class PesananMasukController extends Controller
             // Update status to 'ditolak' for those not selected
             KeranjangPesanan::whereNotIn('id', $orderIds)->update(['status' => 'ditolak']);
         }
-    
+
         return response()->json(['message' => 'Status updated successfully']);
     }
 
@@ -47,12 +49,24 @@ class PesananMasukController extends Controller
         return response()->json(['message' => 'Orders processed successfully.'], 200);
     }
 
-    public function approveOrders(Request $request)
+    public function approveOrders(Request $request): JsonResponse
     {
         $orderIds = $request->input('order_ids'); // Expecting an array of order IDs
 
         // Update the status of the specified orders to 'approved'
-        KeranjangPesanan::whereIn('id', $orderIds)->update(['status' => 'approved']);
+        KeranjangPesanan::whereIn('id', $orderIds)->update(['status_id' => 3]);
+
+        // Fetch the updated orders
+        $data = KeranjangPesanan::whereIn('id', $orderIds)->get();
+
+        // Log each order in the history table
+        foreach ($data as $item) {
+            RiwayatPesanan::create([
+                'order_id' => $item->produk_id,
+                'status_id' => $item->status_id,
+                'jumlah' => $item->jumlah,
+            ]);
+        }
 
         return response()->json(['success' => true]);
     }

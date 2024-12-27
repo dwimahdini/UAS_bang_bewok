@@ -150,3 +150,9 @@ Route::delete('/keranjangPesanan/batalPesanan/{id}', [KeranjangPesananController
 
 Route::post('/pesananMasuk/terimaPesanan', [PesananMasukController::class, 'approveOrders']);
 Route::post('/pesananMasuk/tolakPesanan', [PesananMasukController::class, 'rejectOrders']);
+
+Route::post('/updateStatus', [PesananMasukController::class, 'updateStatus']);
+
+Route::get('/debug-cart-status', function () {
+    return \App\Models\KeranjangPesanan::all();
+});

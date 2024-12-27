@@ -30,7 +30,11 @@
                         <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">{{ $item->jumlah }}</td>
                         <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">Rp {{ number_format($item->produk->harga * $item->jumlah, 2, ',', '.') }}</td>
                         <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">{{ $item->updated_at->format('d F Y') }}</td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">{{ $item->status }}</td>
+                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">
+                            <span class="{{ $item->status === 'menunggu' ? 'bg-blue-200 text-blue-800' : ($item->status === 'disetujui' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800') }} px-2 py-1 rounded">
+                                {{ $item->status === 'menunggu' ? 'Menunggu' : ($item->status === 'disetujui' ? 'Disetujui' : 'Ditolak') }}
+                            </span>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
@@ -82,6 +86,16 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({ order_ids: orderIds })
+                    });
+
+                    // Update status di KeranjangPesanan
+                    await fetch('/updateStatus', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ order_ids: orderIds, action })
                     });
 
                     if (!response.ok) {

@@ -25,6 +25,7 @@ class KeranjangPesananController extends Controller
         KeranjangPesanan::create([
             'produk_id' => $validated['productId'],
             'jumlah' => $validated['quantity'],
+            'status' => 'menunggu',
         ]);
 
         return response()->json(['success' => true]);
@@ -52,6 +53,8 @@ class KeranjangPesananController extends Controller
     // Process all orders from the cart
     public function processAllOrders(Request $request)
     {
+        Log::info('Processing orders', ['order_ids' => $request->input('order_ids')]);
+
         try {
             Log::info('Processing all orders');
             $orderIds = $request->input('order_ids');

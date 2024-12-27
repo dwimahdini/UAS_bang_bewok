@@ -25,8 +25,8 @@
                 <p class="text-gray-600 w-1/3 text-right mr-4">Total: Rp {{ number_format($itemTotal, 2, ',', '.') }}</p>
                 <p class="text-gray-600 w-1/3 text-center">
                     Status: 
-                    <span class="{{ $item->status === 'pending' ? 'bg-green-200 text-green-800' : ($item->status === 'processed' ? 'bg-blue-200 text-blue-800' : '') }} px-2 py-1 rounded">
-                        {{ $item->status === 'pending' ? 'Menunggu' : ($item->status === 'processed' ? 'Diproses' : $item->status) }}
+                    <span class="{{ $item->status === 'menunggu' ? 'bg-blue-200 text-blue-800' : ($item->status === 'disetujui' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800') }} px-2 py-1 rounded">
+                        {{ $item->status === 'menunggu' ? 'Menunggu' : ($item->status === 'disetujui' ? 'Disetujui' : 'Ditolak') }}
                     </span>
                 </p>
             </div>

@@ -15,13 +15,18 @@ class PesananMasukController extends Controller
 
     public function updateStatus(Request $request)
     {
-        $status = $request->input('status');
-        $orderIds = $request->input('order_ids'); // Expecting an array of order IDs
-
-        // Update the status of the specified orders
-        KeranjangPesanan::whereIn('id', $orderIds)->update(['status' => $status]);
-
-        return response()->json(['success' => true]);
+        $orderIds = $request->input('order_ids');
+        $action = $request->input('action');
+    
+        if ($action === 'terima') {
+            // Update status to 'disetujui'
+            KeranjangPesanan::whereIn('id', $orderIds)->update(['status' => 'disetujui']);
+        } else {
+            // Update status to 'ditolak' for those not selected
+            KeranjangPesanan::whereNotIn('id', $orderIds)->update(['status' => 'ditolak']);
+        }
+    
+        return response()->json(['message' => 'Status updated successfully']);
     }
 
     public function processOrders(Request $request)
@@ -35,6 +40,9 @@ class PesananMasukController extends Controller
 
         $orderIds = $request->input('order_ids');
         KeranjangPesanan::whereIn('id', $orderIds)->update(['status' => 'processed']);
+
+        // Ensure that the status is set to 'menunggu' when added to the cart
+        KeranjangPesanan::whereIn('id', $orderIds)->update(['status' => 'menunggu']);
 
         return response()->json(['message' => 'Orders processed successfully.'], 200);
     }

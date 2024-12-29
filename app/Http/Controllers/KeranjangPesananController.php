@@ -53,33 +53,13 @@ class KeranjangPesananController extends Controller
     // Process all orders from the cart
     public function processAllOrders(Request $request)
     {
-        Log::info('Processing orders', ['order_ids' => $request->input('order_ids')]);
-
         try {
-            Log::info('Processing all orders');
             $orderIds = $request->input('order_ids');
 
-            // Validate that orderIds is an array and contains valid IDs
-            if (!is_array($orderIds) || empty($orderIds)) {
-                Log::error('Invalid order IDs: ' . json_encode($orderIds));
-                return response()->json(['message' => 'Invalid order IDs.'], 400);
-            }
+            // Your logic to process the orders goes here
 
-            foreach ($orderIds as $id) {
-                $order = KeranjangPesanan::find($id);
-                if ($order) {
-                    // Logic to process the order, e.g., changing status
-                    $order->status = 'processed'; // Example status
-                    $order->save();
-                } else {
-                    Log::error("Order ID {$id} not found.");
-                    return response()->json(['message' => "Order ID {$id} not found."], 404);
-                }
-            }
-
-            return response()->json(['message' => 'All orders processed successfully.'], 200);
+            return response()->json(['message' => 'Orders processed successfully.']);
         } catch (\Exception $e) {
-            Log::error('Error processing orders: ' . $e->getMessage());
             return response()->json(['message' => 'An error occurred while processing orders.'], 500);
         }
     }

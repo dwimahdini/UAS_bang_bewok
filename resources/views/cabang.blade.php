@@ -14,7 +14,8 @@
             </a>
             <p class="mb-1 text-sm font-normal text-black">{{ $cabang->jalan }}</p>
             <p class="mb-1 text-sm font-normal text-black">Phone: {{ $cabang->nomor_telepon }}</p>
-            <a href="#" class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-[#C3AB12] rounded-lg hover:bg-[#5D5108] focus:ring-4 focus:outline-none focus:ring-[#C3AB12]" onclick="openDetailModal('{{ $cabang->nama }}', '{{ asset($cabang->image_path) }}', '{{ $cabang->jalan }}', '{{ $cabang->provinsi }}', '{{ $cabang->kota }}', '{{ $cabang->nomor_telepon }}')">
+            <a href="#" class="inline-flex items-center px-2 py-1 text-xs font-medium text-center text-white bg-[#C3AB12] rounded-lg hover:bg-[#5D5108] focus:ring-4 focus:outline-none focus:ring-[#C3AB12]"
+                onclick="openDetailModal('{{ $cabang->nama }}', '{{ asset($cabang->image_path) }}', '{{ $cabang->jalan }}', '{{ $cabang->provinsi }}', '{{ $cabang->kota }}', '{{ $cabang->nomor_telepon }}')">
                 Detail
                 <svg class="rtl:rotate-180 w-3 h-3 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
@@ -46,7 +47,7 @@
             </div>
             <div class="p-4">
                 <img id="modalBranchImage" class="mb-2" src="" alt="Branch Image" style="width: 100%; height: auto;" />
-                <p id="modalBranchAddress" class="mb-2 text-sm font-normal text-black"></p>
+                <p id="modalBranchAddress" class="mb-3 text-sm font-normal text-black"></p>
                 <p id="modalBranchPostalCode" class="mb-2 text-sm font-normal text-black"></p>
                 <p id="modalBranchCity" class="mb-2 text-sm font-normal text-black"></p>
                 <p id="modalBranchProvince" class="mb-2 text-sm font-normal text-black"></p>
@@ -71,32 +72,32 @@
                 <form action="{{ route('cabangs.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="mb-4">
-                        <label for="nama" class="block text-sm font-medium text-gray-700">Nama Cabang</label>
-                        <input type="text" name="nama" id="nama" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required>
+                        <label for="nama" class="block text-sm font-medium mb-1 text-gray-700">Nama Cabang</label>
+                        <input type="text" name="nama" id="nama" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none transition duration-300" required>
                     </div>
                     <div class="mb-4">
                         <label for="jalan" class="block text-sm font-medium text-gray-700">Jalan</label>
-                        <input type="text" name="jalan" id="jalan" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required>
+                        <input type="text" name="jalan" id="jalan" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none transition duration-300" required>
                     </div>
                     <div class="mb-4">
                         <label for="provinsi" class="block text-sm font-medium text-gray-700">Provinsi</label>
-                        <input type="text" name="provinsi" id="provinsi" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required>
+                        <input type="text" name="provinsi" id="provinsi" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none transition duration-300" required>
                     </div>
                     <div class="mb-4">
                         <label for="kota" class="block text-sm font-medium text-gray-700">Kota</label>
-                        <input type="text" name="kota" id="kota" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required>
+                        <input type="text" name="kota" id="kota" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none transition duration-300" required>
                     </div>
                     <div class="mb-4">
                         <label for="nomor_telepon" class="block text-sm font-medium text-gray-700">Nomor Telepon</label>
-                        <input type="text" name="nomor_telepon" id="nomor_telepon" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required>
+                        <input type="text" name="nomor_telepon" id="nomor_telepon" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none transition duration-300" required>
                     </div>
                     <div class="mb-4">
                         <label for="image_path" class="block text-sm font-medium text-gray-700">Gambar</label>
-                        <input type="file" name="image_path" id="image_path" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required>
+                        <input type="file" name="image_path" id="image_path" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none transition duration-300" required>
                     </div>
                     <div class="flex justify-end">
-                        <button type="button" onclick="closeAddBranchModal()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">Batal</button>
-                        <button type="submit" class="ml-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">Tambah</button>
+                        <button type="button" onclick="closeAddBranchModal()" class="bg-red-500 text-white px-4 py-2 rounded-lg">Batal</button>
+                        <button type="submit" class="bg-[#5D5108] text-white px-4 py-2 rounded-lg">Tambah</button>
                     </div>
                 </form>
             </div>

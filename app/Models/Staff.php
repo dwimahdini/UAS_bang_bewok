@@ -9,9 +9,11 @@ class Staff extends Model
 {
     use HasFactory;
 
-    // Specify the table if it's not the plural of the model name
-    protected $table = 'staff';
-
-    // Specify the fields that are mass assignable
-    protected $fillable = ['nama', 'notel', 'email', 'posisi', 'cabang'];
+    protected $fillable = [
+        'nama',
+        'notel',
+        'email',
+        'posisi',
+        'cabang',
+    ];
 }

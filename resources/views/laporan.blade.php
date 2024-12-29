@@ -3,6 +3,12 @@
 @vite('resources/css/app.css')
 
 @section('content')
+<head>
+    <!-- ... existing head content ... -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
 <div class="container mx-auto mt-8">
     <!-- Filter Tanggal -->
     <div class="flex items-center justify-between mb-4 border border-grey-500 p-4 rounded">
@@ -29,7 +35,8 @@
                     style="background-color: #84cc16; color: white;"
                     onmouseover="this.style.backgroundColor='#15803d'"
                     onmouseout="this.style.backgroundColor='#84cc16'"
-                    id="printButton">
+                    id="printButton"
+                    onclick="printReport()">
                 Cetak
             </button>
         </div>
@@ -51,7 +58,7 @@
                 @foreach($data as $item)
                     <tr>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $loop->iteration }}</td>
-                        <td class="px-6 py-4 text-sm text-gray-700">{{ $item->produk->nama_produk }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-700">{{ $item->produk ? $item->produk->nama_produk : 'Produk tidak ditemukan' }}</td>
                         <td class="px-6 py-4 text-sm text-gray-700 text-center">{{ $item->jumlah }}</td>
                         <td class="px-6 py-4 text-sm text-gray-700 text-center">{{ $item->created_at->translatedFormat('d F Y') }}</td>
                         <td class="px-6 py-4 text-sm text-gray-700 text-center">{{ $item->status->nama_status }}</td>
@@ -101,5 +108,18 @@
         });
     });
 
+    function printReport() {
+        const fromDate = '{{ request('from_date') }}';
+        const toDate = '{{ request('to_date') }}';
+        window.location = '{{ route('laporan.print', ['from_date' => request('from_date'), 'to_date' => request('to_date')]) }}';
+
+        // Menampilkan notifikasi setelah cetak
+        Swal.fire({
+            title: 'Berhasil!',
+            text: 'Produk berhasil dicetak.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    }
 </script>
 @endsection

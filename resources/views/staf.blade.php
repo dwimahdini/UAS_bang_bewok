@@ -51,7 +51,7 @@
                         <td class="px-4 py-2 whitespace-nowrap text-xs text-gray-900 text-center border-r border-gray-300">{{ $staff->posisi }}</td>
                         <td class="px-4 py-2 whitespace-nowrap text-xs text-gray-900 text-center border-r border-gray-300">{{ $staff->cabang }}</td>
                         <td class="px-4 py-2 whitespace-nowrap text-xs text-gray-900 text-center">
-                            <button class="bg-yellow-400 text-white px-2 py-1 rounded-lg hover:bg-yellow-500 transition duration-300"
+                            <button class="edit-button bg-yellow-400 text-white px-2 py-1 rounded-lg hover:bg-yellow-500 transition duration-300"
                                     onclick="openEditModal(this)"
                                     data-id="{{ $staff->id }}"
                                     data-nama="{{ $staff->nama }}"
@@ -85,7 +85,6 @@
         <h2 class="text-lg font-semibold mb-4">Tambah Staf Baru</h2>
         <form action="{{ route('staff.store') }}" method="POST">
             @csrf
-            @method('POST')
             <div class="mb-4">
                 <label for="nama" class="block text-sm font-medium mb-2">Nama</label>
                 <input type="text" id="nama" name="nama" autocomplete="off" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none transition duration-300" required>
@@ -126,7 +125,7 @@
 <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
     <div class="bg-white rounded-lg p-6 w-full max-w-lg">
         <h2 class="text-xl font-semibold mb-4">Edit Staf</h2>
-        <form id="editForm" action="#" method="POST">
+        <form id="editForm" action="#" method="POST" onsubmit="return handleEditSubmit(event)">
             @csrf
             @method('PUT')
             <div class="mb-4">
@@ -159,7 +158,7 @@
             </div>
             <div class="flex justify-end">
                 <button type="button" onclick="closeEditModal()" class="bg-red-500 text-white px-4 py-2 rounded-lg">Batal</button>
-                <button type="submit" class="border border-gray-300 px-4 py-2 text-xs rounded-lg focus:outline-none transition duration-300">Simpan</button>
+                <button type="submit" class="border border-gray-300 px-4 py-2 text-xs bg-blue-500 text-white rounded-lg focus:outline-none transition duration-300">Simpan</button>
             </div>
         </form>
     </div>
@@ -170,16 +169,63 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Ensure all elements are available before adding event listeners
-        const editButtons = document.querySelectorAll('.edit-button'); // Assuming you have a class for edit buttons
+        // Pastikan elemen yang ingin diakses ada
+        const toggleSidebarButton = document.getElementById('toggleSidebarButton'); // Ganti dengan ID yang sesuai
+        const sidebar = document.getElementById('sidebar'); // Ganti dengan ID yang sesuai
+        const mainContent = document.getElementById('mainContent'); // Ganti dengan ID yang sesuai
+        const logoText = document.getElementById('logoText'); // Ganti dengan ID yang sesuai
+        const menuTexts = document.querySelectorAll('.menu-text'); // Ganti dengan selector yang sesuai
 
-        editButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                openEditModal(this);
+        if (toggleSidebarButton && sidebar && mainContent && logoText) {
+            // Event listener untuk toggle sidebar
+            toggleSidebarButton.addEventListener('click', () => {
+                if (sidebar.classList.contains('w-64')) {
+                    sidebar.classList.remove('w-64');
+                    sidebar.classList.add('w-20');
+                    logoText.classList.add('hidden'); // Sembunyikan teks logo
+                    menuTexts.forEach(text => text.classList.add('hidden')); // Sembunyikan teks menu
+                    mainContent.classList.remove('ml-64');
+                    mainContent.classList.add('ml-20'); // Sesuaikan margin untuk konten utama
+                } else {
+                    sidebar.classList.remove('w-20');
+                    sidebar.classList.add('w-64');
+                    logoText.classList.remove('hidden'); // Tampilkan teks logo
+                    menuTexts.forEach(text => text.classList.remove('hidden')); // Tampilkan teks menu
+                    mainContent.classList.remove('ml-20');
+                    mainContent.classList.add('ml-64'); // Sesuaikan margin untuk konten utama
+                }
             });
-        });
+        } else {
+            console.error("Element not found: toggleSidebarButton, sidebar, mainContent, or logoText");
+        }
 
-        // Define functions in the global scope
+        // Pastikan elemen notifikasi ada
+        const notification = document.getElementById('notification-content');
+        const notificationButton = document.getElementById('notification-button');
+        const closeButton = document.getElementById('close-notification');
+
+        if (notification) {
+            // Menampilkan notifikasi otomatis setelah halaman dimuat jika ada produk mendekati kadaluarsa
+            notification.classList.remove('hidden'); // Menampilkan notifikasi
+            // Menutup notifikasi setelah 5 detik
+            setTimeout(function() {
+                notification.classList.add('hidden'); // Menyembunyikan notifikasi setelah 5 detik
+            }, 2000);
+        }
+
+        // Fungsi untuk menampilkan atau menyembunyikan notifikasi saat tombol bel diklik
+        if (notificationButton) {
+            notificationButton.addEventListener('click', function() {
+                notification.classList.toggle('hidden'); // Menyembunyikan atau menampilkan notifikasi saat tombol bel diklik
+            });
+        }
+
+        // Function to open the add staff modal
+        window.openAddStaffModal = function() {
+            document.getElementById("addStaffModal").classList.remove("hidden");
+        };
+
+        // Function to open the edit modal
         window.openEditModal = function(button) {
             const id = button.getAttribute('data-id');
             const form = document.getElementById('editForm');
@@ -194,7 +240,34 @@
             document.getElementById("editModal").classList.remove("hidden");
         };
 
-        // Add JavaScript functions for sorting and searching similar to the inventory page
+        // Function to close the add staff modal
+        window.closeAddStaffModal = function() {
+            document.getElementById("addStaffModal").classList.add("hidden");
+        };
+
+        // Function to close the edit modal
+        window.closeEditModal = function() {
+            document.getElementById("editModal").classList.add("hidden");
+        };
+
+        // Function to confirm deletion
+        window.confirmDelete = function(id) {
+            Swal.fire({
+                title: 'Yakin ingin menghapus staf ini?',
+                text: "Tindakan ini tidak dapat dibatalkan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, hapus!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`deleteForm-${id}`).submit();
+                }
+            });
+        };
+
+        // Sorting and searching functions
         function sortTable() {
             const table = document.getElementById("staffTable");
             const rows = Array.from(table.rows);
@@ -236,33 +309,20 @@
             });
         }
 
-        function openAddStaffModal() {
-            document.getElementById("addStaffModal").classList.remove("hidden");
-        }
+        // Function to handle the edit form submission
+        window.handleEditSubmit = function(event) {
+            event.preventDefault(); // Prevent default form submission
+            const form = event.target; // Get the form that triggered the event
+            console.log("Form submitted for editing staff with ID:", form.action.split('/').pop()); // Log ID
 
-        function closeAddStaffModal() {
-            document.getElementById("addStaffModal").classList.add("hidden");
-        }
+            // Debugging: Log form data
+            const formData = new FormData(form);
+            for (const [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
 
-        function closeEditModal() {
-            document.getElementById("editModal").classList.add("hidden");
-        }
-
-        function confirmDelete(id) {
-            Swal.fire({
-                title: 'Yakin ingin menghapus staf ini?',
-                text: "Tindakan ini tidak dapat dibatalkan!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, hapus!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById(`deleteForm-${id}`).submit();
-                }
-            });
-        }
+            form.submit(); // Submit the form normally
+        };
 
         @if (session('success'))
         Swal.fire({

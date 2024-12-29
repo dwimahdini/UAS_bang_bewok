@@ -2,35 +2,25 @@
 @section('title', 'Beranda')
 
 @section('content')
-<div class="p-4">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-green-300 p-4 rounded-lg shadow-md text-center hover:bg-green-400 transition duration-300">
-            <h2 class="text-4xl">{{ $produkTersedia }}</h2>
-            <p class="text-gray-800">Produk Tersedia</p>
-        </div>
-        <div class="bg-yellow-300 p-4 rounded-lg shadow-md text-center hover:bg-yellow-400 transition duration-300">
-            <h2 class="text-4xl">{{ $produkMenipis }}</h2>
-            <p class="text-gray-800">Produk Menipis</p>
-        </div>
-        <div class="bg-red-300 p-4 rounded-lg shadow-md text-center hover:bg-red-400 transition duration-300">
-            <h2 class="text-4xl">{{ $produkTidakTersedia }}</h2>
-            <p class="text-gray-800">Produk Tidak Tersedia</p>
-        </div>
-    </div>
-
+<div class="p-4" style="background-color: #00000;"> <!-- Ubah warna latar belakang halaman -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
         <div class="bg-green-300 p-4 rounded-lg shadow-md text-center hover:bg-green-400 transition duration-300">
-            <h2 class="text-4xl">{{ $produkKedalursa }}</h2>
-            <p class="text-gray-800">Produk Kedalursa</p>
+            <h2 class="text-4xl">{{ $produkAman }}</h2>
+            <p class="text-gray-800">Produk Aman</p>
         </div>
         <div class="bg-yellow-300 p-4 rounded-lg shadow-md text-center hover:bg-yellow-400 transition duration-300">
             <h2 class="text-4xl">{{ $produkMendekati }}</h2>
             <p class="text-gray-800">Produk Mendekati Kadaluarsa</p>
         </div>
         <div class="bg-red-300 p-4 rounded-lg shadow-md text-center hover:bg-green-400 transition duration-300">
-            <h2 class="text-4xl">{{ $produkAman }}</h2>
-            <p class="text-gray-800">Produk Aman</p>
+            <h2 class="text-4xl">{{ $produkKedalursa }}</h2>
+            <p class="text-gray-800">Produk Kedaluarsa</p>
         </div>
+    </div>
+</div>    
+<div>
+    <div class="mt-8">
+        <canvas id="produkChart" style="background-color: #f3df60;"></canvas> <!-- Ubah warna latar belakang chart -->
     </div>
 </div>
 
@@ -42,4 +32,30 @@
         font-family: 'Inter', sans-serif;
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var ctx = document.getElementById('produkChart').getContext('2d');
+        var produkChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @json($produk->pluck('nama_produk')),
+                datasets: [{
+                    label: 'Jumlah Produk',
+                    data: @json($produk->pluck('jumlah')),
+                    backgroundColor: '#444444',  // Ubah warna bar menjadi #444444
+                    borderColor: '#444444',    // Ubah warna border bar menjadi #444444
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
 @endsection

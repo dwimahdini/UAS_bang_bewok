@@ -148,7 +148,7 @@ class ProdukController extends Controller
     public function berandaAdmin()
     {
         $produk = Produk::all();
-
+    
         $produkTersedia = $produk->where('jumlah', '>=', 2)->count();
         $produkMenipis = $produk->where('jumlah', '<', 2)->count();
         $produkTidakTersedia = $produk->where('jumlah', 0)->count();
@@ -161,7 +161,7 @@ class ProdukController extends Controller
         $produkAman = $produk->filter(function ($p) {
             return Carbon::parse($p->tanggal_kadaluarsa)->diffInDays(Carbon::now()) > 3;
         })->count();
-
+    
         return view('beranda', compact('produkTersedia', 'produkMenipis', 'produkTidakTersedia', 'produkKedalursa', 'produkMendekati', 'produkAman', 'produk'));
     }
 

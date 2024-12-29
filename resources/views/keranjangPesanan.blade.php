@@ -78,7 +78,9 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
                 }
 
                 const data = await response.json();

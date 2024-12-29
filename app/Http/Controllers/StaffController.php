@@ -39,7 +39,7 @@ class StaffController extends Controller
     }
 
     public function destroy($id)
-    {
+    {   
         $staff = Staff::findOrFail($id);
         $staff->delete();
 
@@ -56,17 +56,13 @@ class StaffController extends Controller
     {
         $staff = Staff::findOrFail($id);
 
-        // Validasi data
-        $validatedData = $request->validate([
-            'nama' => 'required|string|max:255',
-            'notel' => 'required|string|max:15',
-            'email' => 'required|email|max:255|unique:staff,email,' . $id,
-            'posisi' => 'required|in:staf,kepala cabang',
-            'cabang' => 'nullable|in:cabang 1,cabang 2,cabang 3',
-        ]);
-
-        // Update data di database
-        $staff->update($validatedData);
+        // Update data di database tanpa validasi
+        $staff->nama = $request->input('nama');
+        $staff->notel = $request->input('notel');
+        $staff->email = $request->input('email');
+        $staff->posisi = $request->input('posisi');
+        $staff->cabang = $request->input('cabang');
+        $staff->save(); // Simpan perubahan
 
         return redirect()->route('staff.index')->with('success', 'Staf berhasil diperbarui.');
     }

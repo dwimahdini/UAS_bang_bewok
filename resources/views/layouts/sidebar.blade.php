@@ -6,6 +6,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="icon" href="{{ asset("img/logo_bang_bewok.png") }}" type="image/png" />
 
   <style>
@@ -31,78 +32,77 @@
       </div>
 
       <!-- Menu navigasi -->
-      <nav id="menu" class="flex-1 px-2 py-6 space-y-4">
-        @if(Auth::user()->role === 'admin')
-            <a href="/beranda" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
-                <i class="bx bx-home-alt text-xl ml-2 text-black"></i>
-                <span class="menu-text text-black">Beranda</span>
-            </a>
-        @endif
+    <nav id="menu" class="flex-1 px-2 py-6 space-y-4">
+      @if(Auth::user()->role === 'admin' || Auth::user()->role === 'manajer')
+          <a href="/beranda" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
+              <i class="bx bx-home-alt text-xl ml-2 text-black"></i>
+              <span class="menu-text text-black">Beranda</span>
+          </a>
+      @endif
 
-        @if(Auth::user()->role != 'admin')
-        <a href="/berandaStaf" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
-            <i class="bx bx-home-alt text-xl ml-2 text-black"></i>
-            <span class="menu-text text-black">Beranda</span>
-        </a>
-    @endif
+      @if(Auth::user()->role != 'staf')
+          <a href="/berandaStaf" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
+              <i class="bx bx-home-alt text-xl ml-2 text-black"></i>
+              <span class="menu-text text-black">Beranda</span>
+          </a>
+      @endif
 
-    @if(Auth::user()->role != 'staf' )
-        <a href="/inventori" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
-            <i class="bx bx-layer text-xl ml-2 text-black"></i>
-            <span class="menu-text text-black">Inventori</span>
-        </a>
-    @endif
+      @if(Auth::user()->role != 'staf' || Auth::user()->role === 'manajer' )
+          <a href="/inventori" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
+              <i class="bx bx-layer text-xl ml-2 text-black"></i>
+              <span class="menu-text text-black">Inventori</span>
+          </a>
+      @endif
 
+      @if(Auth::user()->role === 'admin')
+          <a href="/penggunaakun" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
+              <i class="bx bx-universal-access text-xl ml-2 text-black"></i>
+              <span class="menu-text text-black">Kelola Akun</span>
+          </a>
+      @endif
 
+      @if(Auth::user()->role === 'admin')
+          <a href="/pesananMasuk" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
+              <i class="bx bx-archive-in text-xl ml-2 text-black"></i>
+              <span class="menu-text text-black">Pesanan Masuk</span>
+          </a>
+      @endif
 
-        @if(Auth::user()->role === 'admin')
-        <a href="/penggunaakun" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
-          <i class="bx bx-universal-access text-xl ml-2 text-black"></i>
-          <span class="menu-text text-black">Kelola Akun</span>
-        </a>
-        @endif
+      @if(Auth::user()->role === 'staf')
+          <a href="/pesanProduk" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
+              <i class="bx bx-archive-out text-xl ml-2 text-black"></i>
+              <span class="menu-text text-black">Pesan Bahan Baku</span>
+          </a>
+      @endif
 
-        @if(Auth::user()->role === 'admin')
-        <a href="/pesananMasuk" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
-            <i class="bx bx-archive-in text-xl ml-2 text-black"></i>
-            <span class="menu-text text-black">Pesanan Masuk</span>
-        </a>
-        @endif
+      @if(Auth::user()->role === 'staf')
+          <a href="/keranjangPesanan" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
+              <i class="bx bx-cart-alt text-xl ml-2 text-black"></i>
+              <span class="menu-text text-black">Keranjang</span>
+          </a>
+      @endif
 
-        @if(Auth::user()->role === 'staf')
-        <a href="/pesanProduk" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
-            <i class="bx bx-archive-out text-xl ml-2 text-black"></i>
-            <span class="menu-text text-black">Pesan Bahan Baku</span>
-        </a>
-        @endif
+      @if(Auth::user()->role === 'admin')
+          <a href="/staf" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
+              <i class="bx bx-group text-xl ml-2 text-black"></i>
+              <span class="menu-text text-black">Staf</span>
+          </a>
+      @endif
 
-        @if(Auth::user()->role === 'staf')
-        <a href="/keranjangPesanan" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
-            <i class="bx bx-cart-alt text-xl ml-2 text-black"></i>
-            <span class="menu-text text-black">Keranjang</span>
-        </a>
-        @endif
+      @if(Auth::user()->role === 'admin')
+          <a href="/cabang" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
+              <i class="bx bx-store-alt text-xl ml-2 text-black"></i>
+              <span class="menu-text text-black">Cabang</span>
+          </a>
+      @endif
 
-        @if(Auth::user()->role === 'admin')
-        <a href="/staf" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
-            <i class="bx bx-group text-xl ml-2 text-black"></i>
-            <span class="menu-text text-black">Staf</span>
-        </a>
-        @endif
-
-        @if(Auth::user()->role === 'admin')
-        <a href="/cabang" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
-            <i class="bx bx-store-alt text-xl ml-2 text-black"></i>
-            <span class="menu-text text-black">Cabang</span>
-        </a>
-        @endif
-
-        <a href="/laporan" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
-            <i class="bx bx-clipboard text-xl ml-2 text-black"></i>
-            <span class="menu-text text-black">Laporan</span>
-        </a>
-      </nav>
-
+      @if(Auth::user()->role === 'admin' || Auth::user()->role === 'manajer')
+          <a href="/laporan" class="flex items-center gap-3 text-black hover:bg-blue-100 p-2 rounded">
+              <i class="bx bx-clipboard text-xl ml-2 text-black"></i>
+              <span class="menu-text text-black">Laporan</span>
+          </a>
+      @endif
+    </nav>
       <!-- Menu Logout -->
       <a href="/logout" class="flex items-center gap-3 text-red hover:bg-blue-100 p-2 rounded ml-1 mb-1">
           <i class="bx bx-log-out text-xl ml-2 text-red"></i>

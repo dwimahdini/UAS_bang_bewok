@@ -58,9 +58,9 @@ class KeranjangPesananController extends Controller
 
             // Your logic to process the orders goes here
 
-            return response()->json(['message' => 'Orders processed successfully.']);
+            return response()->json(['message' => 'Pesanan berhasil diproses.']);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'An error occurred while processing orders.'], 500);
+            return response()->json(['message' => 'Terjadi kesalahan pada server.'], 500);
         }
     }
 
@@ -72,9 +72,9 @@ class KeranjangPesananController extends Controller
             // Update the order status to 'accepted' or similar
             $order->status = 'accepted';
             $order->save();
-            return response()->json(['message' => 'Order accepted successfully.'], 200);
+            return response()->json(['message' => 'Pesanan diterima.'], 200);
         }
-        return response()->json(['error' => 'Order not found.'], 404);
+        return response()->json(['error' => 'Pesanan tidak ditemukan.'], 404);
     }
 
     // Reject an order (if needed)
@@ -86,9 +86,9 @@ class KeranjangPesananController extends Controller
             // Update the order status to 'rejected' or similar
             $order->status = 'rejected';
             $order->save();
-            return response()->json(['message' => 'Order rejected successfully.'], 200);
+            return response()->json(['message' => 'Pesanan ditolak.'], 200);
         }
-        return response()->json(['error' => 'Order not found.'], 404);
+        return response()->json(['error' => 'Pesanan tidak ditemukan.'], 404);
     }
 
     public function viewCart()
@@ -103,7 +103,7 @@ class KeranjangPesananController extends Controller
         $orderIds = $request->input('order_ids');
         // Update the status in the database
         Order::whereIn('id', $orderIds)->update(['status' => 'processed']);
-        return response()->json(['message' => 'Pesanan diterima.']);
+        return response()->json(['message' => 'Pesanan berhasil diproses.']);
     }
 
     public function rejectOrders(Request $request)
@@ -111,6 +111,6 @@ class KeranjangPesananController extends Controller
         $orderIds = $request->input('order_ids');
         // Update the status in the database
         Order::whereIn('id', $orderIds)->update(['status' => 'rejected']);
-        return response()->json(['message' => 'Pesanan ditolak.']);
+        return response()->json(['message' => 'Pesanan berhasil ditolak.']);
     }
 }

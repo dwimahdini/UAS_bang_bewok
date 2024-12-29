@@ -88,17 +88,11 @@
                         body: JSON.stringify({ order_ids: orderIds })
                     });
 
-                    console.table(orderIds)
-
-                    // Update status di KeranjangPesanan
-                    await fetch('/updateStatus', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ order_ids: orderIds, action })
-                    });
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Error response:', errorText);
+                        throw new Error('Server error');
+                    }
 
                     const data = await response.json();
                     Swal.fire(title, data.message || 'Operasi berhasil.', 'success').then(() => {

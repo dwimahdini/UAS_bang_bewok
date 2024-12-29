@@ -76,7 +76,15 @@ class PesananMasukController extends Controller
         $orderIds = $request->input('order_ids'); // Expecting an array of order IDs
 
         // Update the status of the specified orders to 'rejected'
-        KeranjangPesanan::whereIn('id', $orderIds)->update(['status' => 'rejected']);
+        KeranjangPesanan::whereIn('id', $orderIds)->update(['status_id' => 2]);
+        $data = KeranjangPesanan::whereIn('id', $orderIds)->get();
+        foreach ($data as $item) {
+            RiwayatPesanan::create([
+                'order_id' => $item->produk_id,
+                'status_id' => $item->status_id,
+                'jumlah' => $item->jumlah,
+            ]);
+        }
 
         return response()->json(['success' => true]);
     }

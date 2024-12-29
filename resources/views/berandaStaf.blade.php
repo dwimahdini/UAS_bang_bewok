@@ -38,32 +38,40 @@
       <!-- Card 1 -->
       <div class="block rounded-lg bg-white shadow-secondary-1 dark:bg-surface-dark w-full md:w-1/2 lg:w-1/2 xl:w-1/2">
           <a href="{{ route('pesanProduk') }}">
-            <img class="rounded-t-lg w-full" src="https://tecdn.b-cdn.net/img/new/standard/nature/184.jpg" alt="Card Image 1" />
+            <div class="flex justify-center items-center h-48 bg-gray-200">
+              <i class="bx bx-archive-out text-6xl text-gray-700"></i>
+            </div>
           </a>
           <div class="p-6 text-black">
             <h5 class="mb-2 text-xl font-medium leading-tight">Pesan Produk</h5>
             <p class="mb-4 text-base">
               Produk yang tersedia dan anda dapat memesan
             </p>
-            <button type="button" class="inline-block rounded bg-black px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-gray-700 hover:shadow-primary-2 focus:bg-gray-700 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-gray-800 active:shadow-primary-2 dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong">
-              Klik disini
-            </button>
+            <a href="{{ route('pesanProduk') }}">
+              <button type="button" class="inline-block rounded bg-black px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-gray-700 hover:shadow-primary-2 focus:bg-gray-700 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-gray-800 active:shadow-primary-2 dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong">
+                klik disini
+              </button>
+            </a>
           </div>
         </div>
 
       <!-- Card 2 -->
       <div class="block rounded-lg bg-white shadow-secondary-1 dark:bg-surface-dark w-full md:w-1/2 lg:w-1/2 xl:w-1/2">
         <a href="{{ route('keranjangPesanan') }}">
-          <img class="rounded-t-lg w-full" src="https://tecdn.b-cdn.net/img/new/standard/nature/185.jpg" alt="Card Image 2" />
+          <div class="flex justify-center items-center h-48 bg-gray-200">
+            <i class="bx bx-cart-alt text-6xl text-gray-700"></i>
+          </div>
         </a>
         <div class="p-6 text-black">
           <h5 class="mb-2 text-xl font-medium leading-tight">Keranjang Pesanan</h5>
           <p class="mb-4 text-base">
             Semua pesanan anda tersimpan disini
           </p>
-          <button type="button" class="inline-block rounded bg-black px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-gray-700 hover:shadow-primary-2 focus:bg-gray-700 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-gray-800 active:shadow-primary-2 dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong">
-            klik disini
-          </button>
+          <a href="{{ route('keranjangPesanan') }}">
+            <button type="button" class="inline-block rounded bg-black px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-gray-700 hover:shadow-primary-2 focus:bg-gray-700 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-gray-800 active:shadow-primary-2 dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong">
+              klik disini
+            </button>
+          </a>
         </div>
     </div>
   </div>

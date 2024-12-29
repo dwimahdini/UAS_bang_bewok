@@ -20,7 +20,7 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($keranjang as $item)
+                @foreach($keranjang as $item)
                     <tr class="hover:bg-gray-100 transition duration-300 ease-in-out">
                         <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">
                             <input type="checkbox" name="order_ids[]" value="{{ $item->id }}">
@@ -36,13 +36,7 @@
                             </span>
                         </td>
                     </tr>
-                @empty
-                    <tr>
-                        <td colspan="7" class="px-4 py-2 text-center text-sm text-gray-500">
-                            Tidak ada produk yang masuk.
-                        </td>
-                    </tr>
-                @endforelse
+                @endforeach
             </tbody>
         </table>
     </div>

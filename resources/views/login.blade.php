@@ -63,5 +63,25 @@
             this.classList.toggle('fa-eye-slash');
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check for login status from session
+            @if(session('login_status') === 'success')
+                Swal.fire({
+                    title: 'Login Berhasil!',
+                    text: 'Selamat datang kembali!',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            @elseif(session('login_status') === 'failed')
+                Swal.fire({
+                    title: 'Login Gagal!',
+                    text: 'Periksa kembali kredensial Anda.',
+                    icon: 'error',
+                    confirmButtonText: 'Coba Lagi'
+                });
+            @endif
+        });
+    </script>
 </body>
 </html>

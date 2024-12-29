@@ -32,16 +32,20 @@ class LoginController extends Controller
     
             // Redirect berdasarkan peran
             if ($user->role === 'staf') {
+                session()->flash('login_status', 'success');
                 return redirect()->intended('/berandaStaf'); // Rute untuk staf
             } elseif ($user->role === 'manajer') {
+                session()->flash('login_status', 'success');
                 return redirect()->intended('/beranda'); // Rute untuk manajer
             }
     
             // Rute default jika peran tidak dikenali
+            session()->flash('login_status', 'success');
             return redirect()->intended('/beranda'); 
         }
     
         // Jika login gagal, redirect kembali ke halaman login dengan pesan kesalahan
+        session()->flash('login_status', 'failed');
         return redirect()->back()->withErrors([
             'email' => 'Email atau password salah.',
         ])->withInput();

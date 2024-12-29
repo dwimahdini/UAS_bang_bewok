@@ -7,6 +7,7 @@
     <div id="frameProduk" class="bg-white p-4 rounded-lg shadow-sm">
         <h1 class="text-2xl font-bold mb-4">Daftar Produk</h1>
 
+        @if(Auth::user()->role !== 'manajer')
         <div class="flex flex-col md:flex-row md:items-center gap-2 mb-4">
             <select id="sortCriteria" class="border border-gray-300 px-5 py-2 text-sm rounded-lg focus:outline-none transition duration-300" onchange="sortTable()">
                 <option value="" disabled selected>Urutkan</option>
@@ -26,6 +27,7 @@
                 Tambah Produk
             </button>
         </div>
+        @endif
 
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 bg-white shadow-md rounded-lg border border-gray-300">
@@ -40,7 +42,9 @@
                         <th class="px-4 py-2 text-center text-xs font-medium text-white uppercase tracking-wider border-r border-gray-300">Tanggal kedaluarsa</th>
                         <th class="px-4 py-2 text-center text-xs font-medium text-white uppercase tracking-wider border-r border-gray-300">Status kedaluarsa</th>
                         <th class="px-4 py-2 text-center text-xs font-medium text-white uppercase tracking-wider border-r border-gray-300">Status Ketersediaan</th>
+                        @if(Auth::user()->role !== 'manajer')
                         <th class="px-4 py-2 text-center text-xs font-medium text-white uppercase tracking-wider border-r border-gray-300">Aksi</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody id="productTable" class="bg-white divide-y divide-gray-200">
@@ -102,6 +106,7 @@
                                 {{ ucfirst($statusKetersediaan) }}
                             </span>
                         </td>
+                        @if(Auth::user()->role !== 'manajer')
                         <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center border-r border-gray-300">
                             <button onclick="openEditModal({{ $p->id }})" class="bg-yellow-500 text-white px-2 py-1 rounded">Edit</button>
                             <button type="button"
@@ -114,6 +119,7 @@
                                 @method('DELETE')
                             </form>
                         </td>
+                        @endif
                     </tr>
                     @endforeach
                 </tbody>
@@ -123,6 +129,7 @@
 </div>
 
 <!-- Modal Tambah Produk -->
+@if(Auth::user()->role !== 'manajer')
 <div id="addModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden" tabindex="-1" inert>
     <div class="bg-white rounded-lg p-4 w-full max-w-md">
         <h2 class="text-lg font-semibold mb-2 text-center">Tambah Produk</h2>
@@ -159,8 +166,10 @@
         </form>
     </div>
 </div>
+@endif
 
 <!-- Modal Edit Produk -->
+@if(Auth::user()->role !== 'manajer')
 <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden" tabindex="-1" inert>
     <div class="bg-white rounded-lg p-4 w-full max-w-md">
         <h2 class="text-lg font-semibold mb-2 text-center">Edit Produk</h2>
@@ -195,6 +204,7 @@
         </form>
     </div>
 </div>
+@endif
 
 <!-- Include SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -317,51 +327,6 @@
             const name = row.cells[2]?.innerText.toLowerCase() || '';
             row.style.display = name.includes(input) ? '' : 'none';
         });
-    }
-
-    // Function to open add modal
-    function openAddModal() {
-        document.getElementById("addModal").classList.remove("hidden");
-        document.getElementById("addModal").removeAttribute("inert");
-    }
-
-    // Function to close add modal
-    function closeAddModal() {
-        document.getElementById("addModal").classList.add("hidden");
-        document.getElementById("addModal").setAttribute("inert", "true");
-    }
-
-    // Function to open the edit modal
-    function openEditModal(id) {
-        // Fetch product data
-        fetch(`/produk/${id}/edit`)
-            .then(response => response.json())
-            .then(data => {
-                // Populate modal fields
-                document.getElementById('edit_id').value = data.id;
-                document.getElementById('edit_nama_produk').value = data.nama_produk;
-                document.getElementById('edit_jumlah').value = data.jumlah;
-                document.getElementById('edit_harga').value = data.harga;
-                document.getElementById('edit_satuan').value = data.satuan;
-                document.getElementById('edit_tanggal_kadaluarsa').value = data.tanggal_kadaluarsa;
-                // Update form action dynamically
-                const editForm = document.getElementById('editForm');
-                editForm.action = `/produk/update/${id}`;
-
-                // Open modal
-                document.getElementById('editModal').classList.remove('hidden');
-                document.getElementById('editModal').removeAttribute("inert");
-            })
-            .catch(error => {
-                console.error('Error fetching product data:', error);
-                alert('Unable to fetch product data.');
-            });
-    }
-
-    // Function to close edit modal
-    function closeEditModal() {
-        document.getElementById("editModal").classList.add("hidden");
-        document.getElementById("editModal").setAttribute("inert", "true");
     }
 </script>
 

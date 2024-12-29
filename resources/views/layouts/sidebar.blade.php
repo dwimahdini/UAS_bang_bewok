@@ -7,6 +7,7 @@
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="icon" href="{{ asset("img/logo_bang_bewok.png") }}" type="image/png" />
 
   <style>
@@ -104,7 +105,7 @@
       @endif
     </nav>
       <!-- Menu Logout -->
-      <a href="/logout" class="flex items-center gap-3 text-red hover:bg-blue-100 p-2 rounded ml-1 mb-1">
+      <a href="#" id="logout-link" class="flex items-center gap-3 text-red hover:bg-blue-100 p-2 rounded ml-1 mb-1">
           <i class="bx bx-log-out text-xl ml-2 text-red"></i>
           <span class="menu-text text-black">Log Out</span>
       </a>
@@ -203,9 +204,24 @@
     });
 });
 
+    // Add event listener for logout confirmation
+    document.getElementById('logout-link').addEventListener('click', function(event) {
+      event.preventDefault(); // Prevent the default link behavior
 
-
-
+      Swal.fire({
+        title: 'Apakah anda yakin ingin keluar?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Keluar!',
+        cancelButtonText: 'Batal'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/logout'; // Redirect to logout if confirmed
+        }
+      });
+    });
   </script>
 </body>
 </html>

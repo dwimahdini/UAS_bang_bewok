@@ -13,6 +13,8 @@ use App\Http\Controllers\PenggunaAkunController;
 use App\Http\Controllers\PesanProdukController;
 use App\Http\Controllers\KeranjangPesananController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductOrderController;
+use App\Http\Controllers\CartController;
 
 // ROUTE UNTUK INVENTORI
 // Menampilkan halaman inventori
@@ -125,7 +127,7 @@ Route::get('/laporan/print', [LaporanController::class, 'print'])->name('laporan
 
 // ROUTE UNTUK PESAN PRODUK DAN KERANJANG PESANAN
 // Menampilkan halaman pesan produk
-Route::get('/pesanProduk', [PesanProdukController::class, 'index'])->name('pesan.produk')->middleware('auth');
+Route::get('/pesanProduk', [PesananMasukController::class, 'index'])->name('pesanProduk');
 // Menambahkan produk ke keranjang
 Route::post('/keranjang', [KeranjangPesananController::class, 'store']);
 // Menampilkan halaman keranjang pesanan
@@ -175,4 +177,9 @@ Route::get('/cart', [KeranjangPesananController::class, 'viewCart']);
 // Menampilkan status keranjang untuk debugging
 Route::get('/debug-cart-status', function () {
     return KeranjangPesanan::all()->middleware('auth');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/keranjangPesanan', [KeranjangPesananController::class, 'index'])->name('keranjangPesanan')->middleware('auth');
+    Route::get('/pesanProduk', [PesanProdukController::class, 'index'])->name('pesanProduk')->middleware('auth');
 });
